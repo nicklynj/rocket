@@ -50,9 +50,19 @@ rocket.ready(function(){
 
   // new rocket.AutoTab([$('input').i(0), $('input').i(1), $('input').i(2)]);
 
+  (window.as = new rocket.AutoSuggest()).render();
+  (window.as = new rocket.AutoSelect()).render();
   (window.ti = new rocket.TimeInput()).render();
   (window.di = new rocket.DateInput()).render();
-  (window.i = new rocket.Input()).render();
+  (window.i = new rocket.DateInput()).render();
+  
+  
+  var foo = [];
+  for(var i = 0; i < 100; ++i){
+    foo.push([''+$.random(1000000,1001000)]);
+  }
+  
+  as.data(foo);
   
   $('body,html').style({'height': '100%'});
   

@@ -4,7 +4,7 @@
 Parses a date from a given string.
 
 @param {string} str The string to be parsed.
-@return {?Date} The parsed Date or false on error.
+@return {?Date} The parsed Date or null on error.
 */
 rocket.strToDate = function(str) {
 

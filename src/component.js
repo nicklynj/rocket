@@ -21,7 +21,7 @@ rocket.inherits(rocket.Component, rocket.EventTarget);
 @private
 @type {boolean}
 */
-rocket.Component.prototype.component_rendered_;
+rocket.Component.prototype.component_rendered_ = false;
 
 
 /**
@@ -37,6 +37,14 @@ rocket.Component.prototype.rendered = function() {
 @type {boolean}
 */
 rocket.Component.prototype.component_disposed_ = false;
+
+
+/**
+@return {boolean}
+*/
+rocket.Component.prototype.disposed = function() {
+  return this.component_disposed_;
+};
 
 
 /**

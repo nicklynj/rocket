@@ -7,11 +7,7 @@ AutoSuggest
 @constructor
 @extends {rocket.Input}
 */
-rocket.AutoSuggest = function() {
-
-  this.results_ = [];
-
-};
+rocket.AutoSuggest = function() {};
 rocket.inherits(rocket.AutoSuggest, rocket.Input);
 
 
@@ -31,7 +27,7 @@ rocket.AutoSuggest.prototype.scroller_;
 
 /**
 @private
-@type {rocket.table.Table_}
+@type {rocket.Elements}
 */
 rocket.AutoSuggest.prototype.table_;
 
@@ -40,7 +36,14 @@ rocket.AutoSuggest.prototype.table_;
 @private
 @type {rocket.Elements}
 */
-rocket.AutoSuggest.prototype.highlighted_row_;
+rocket.AutoSuggest.prototype.tbody_;
+
+
+/**
+@private
+@type {rocket.Elements}
+*/
+rocket.AutoSuggest.prototype.highlighted_;
 
 
 /**
@@ -65,53 +68,104 @@ rocket.AutoSuggest.prototype.result_;
 
 
 /**
-@param {Object.<number, string>=} opt_result
+Override.
 */
-rocket.AutoSuggest.prototype.setResult = function(opt_result) {
+rocket.AutoSuggest.prototype.show = function() {
 
-  if (arguments.length) {
+  this.container_ = rocket.createElement('div');
+  this.scroller_ = rocket.createElement('div');
 
-    this.result_ = /** @type {Object.<number, string>} */ (opt_result);
-    this.getInput().value(opt_result[0]);
+  var rect = this.getInput().getBoundingClientRect();
 
-  } else {
+  var self = this;
 
-    delete this.result_;
-    this.getInput().value('');
+  this.results_ = [];
 
+  this.container_
+    .style({
+        'border-radius': 3,
+        'position': 'absolute',
+        'background-color': '#FFFFFF',
+        'border': '1px solid #888888',
+        'cursor': 'pointer',
+        'width': rect.width - 2,
+        'top': rect.bottom - 1,
+        'left': rect.left
+      })
+    .preventSelect()
+    .addEventListener('mousedown', function(e) {
+        e.stopPropagation();
+      })
+    .live('tr', 'mouseover', /** @this {HTMLTableRowElement} */ (
+          function() {
+            self.highlight_(new rocket.Elements([this]), false);
+          }
+      ))
+    .live('tr', 'click', function() {
+        self.enter();
+        self.hide();
+        self.hidden(true);
+      });
+
+  this.scroller_
+      .style({
+        'max-height': 200,
+        'overflow-y': 'auto',
+        'overflow-x': 'hidden'
+      });
+
+  this.container_.appendChild(this.scroller_);
+  new rocket.Elements([document.body]).appendChild(this.container_);
+
+};
+
+
+/**
+*/
+rocket.AutoSuggest.prototype.change = function() {
+
+  if (this.query_ !== this.getInput().value()) {
+    this.query_ = /** @type {string} */ (this.getInput().value());
+    this.query(this.query_);
   }
 
-  this.dispatchEvent('select');
+  this.highlighted_ = new rocket.Elements([]);
 
-};
+  this.table_ = rocket.createElement('table');
+  this.tbody_ = rocket.createElement('tbody');
 
+  this.table_
+    .setAttribute({
+        'width': '100%',
+        'cellpadding': '1',
+        'cellspacing': '0',
+        'border': '0'
+      })
+    .style({
+        'table-layout': 'fixed'
+      });
 
-/**
-@return {Object.<number, string>}
-*/
-rocket.AutoSuggest.prototype.getResult = function() {
+  for (var row = 0; this.results_[row]; ++row) {
+    var tr = rocket.createElement('tr');
+    for (var col = 0; this.results_[row][col]; ++col) {
+      tr.appendChild(
+          /** @type {rocket.Elements} */
+          (rocket.createElement('td')
+              .innerHTML(this.results_[row][col])
+              .style({
+                'white-space': 'nowrap',
+                'overflow': 'hidden',
+                'text-overflow': 'ellipsis'
+              })
+          )
+      );
+    }
+    this.tbody_.appendChild(tr);
+  }
 
-  return this.result_;
+  this.table_.appendChild(this.tbody_);
 
-};
-
-
-/**
-@return {rocket.Elements}
-*/
-rocket.AutoSuggest.prototype.getContainer = function() {
-
-  return this.container_;
-
-};
-
-
-/**
-@return {rocket.Elements}
-*/
-rocket.AutoSuggest.prototype.getTable = function() {
-
-  return this.table_;
+  this.scroller_.innerHTML('').appendChild(this.table_);
 
 };
 
@@ -123,11 +177,17 @@ rocket.AutoSuggest.prototype.setResults = function(results) {
 
   this.results_ = results;
 
-  if (this.container_) {
-    this.render_results_();
+  if (!this.hidden()) {
+    this.change();
   }
 
 };
+
+
+/**
+@param {string} str
+*/
+rocket.AutoSuggest.prototype.query = function(str) {};
 
 
 /**
@@ -174,252 +234,26 @@ rocket.AutoSuggest.prototype.data = function(data) {
 
 
 /**
-@param {string} query
-*/
-rocket.AutoSuggest.prototype.query = function(query) {};
-
-
-/**
-@param {Event} e
-*/
-rocket.AutoSuggest.prototype.show = function(e) {
-
-  var query = /** @type {string} */ (this.getInput().value());
-
-  if (!this.container_ || (this.query_ !== query)) {
-
-    if (this.query_ !== query) {
-      this.query(this.query_ = query);
-    }
-
-    this.render_results_();
-
-  }
-
-  if (e.type === 'keydown') {
-
-    var next;
-
-    if (e.which === rocket.KEY.down) {
-
-      this.highlight_next_row_();
-
-    } else if (e.which === rocket.KEY.up) {
-
-      this.highlight_previous_row_();
-
-    } else if (e.which === rocket.KEY.pageDown) {
-
-      for (var i = 0; i < 5; ++i) {
-        this.highlight_next_row_();
-      }
-
-    } else if (e.which === rocket.KEY.pageUp) {
-
-      for (var i = 0; i < 5; ++i) {
-        this.highlight_previous_row_();
-      }
-
-    }
-
-  }
-
-};
-
-
-/**
 @private
+@param {rocket.Elements} element
+@param {boolean} scroll
 */
-rocket.AutoSuggest.prototype.highlight_next_row_ = function() {
+rocket.AutoSuggest.prototype.highlight_ = function(element, scroll) {
 
-  var next;
-
-  if (this.highlighted_row_ &&
-      (
-          next = this.highlighted_row_.nextElementSibling()
-      ).length) {
-
-    this.highlight_row_(next, true);
-
-  } else {
-    this.highlight_row_(this.table_.tbody.firstElementChild(), true);
-  }
-
-};
-
-
-/**
-@private
-*/
-rocket.AutoSuggest.prototype.highlight_previous_row_ = function() {
-
-  var previous;
-
-  if (this.highlighted_row_ &&
-      (
-          previous = this.highlighted_row_.previousElementSibling()
-      ).length) {
-
-    this.highlight_row_(previous, true);
-
-  } else {
-    this.highlight_row_(this.table_.tbody.lastElementChild(), true);
-  }
-
-};
-
-
-/**
-@param {Event} e
-*/
-rocket.AutoSuggest.prototype.hide = function(e) {
-
-  if (e.type === 'keydown' && e.which === rocket.KEY.enter) {
-
-    if (this.highlighted_row_) {
-
-      this.select_row_();
-
-    } else {
-
-      var children = this.table_.tbody.children();
-      if (children.length === 1) {
-        this.highlighted_row_ = children;
-        this.select_row_();
-      }
-
-    }
-
-  }
-
-  this.dispose_();
-
-};
-
-
-/**
-@private
-*/
-rocket.AutoSuggest.prototype.render_results_ = function() {
-
-  this.dispose_();
-
-  this.container_ = rocket.createElement('div');
-  this.scroller_ = rocket.createElement('div');
-  this.table_ = rocket.table(0, 0);
-  var rect = this.getInput().getBoundingClientRect();
-
-  var self = this;
-
-  this.table_.setAttribute({
-    'cellpadding': 1
+  this.highlighted_.style({
+    'backgroundColor': ''
   });
 
-  this.container_
-      .style({
-        'position': 'absolute',
-        'background-color': '#FFFFFF',
-        'border': '1px solid #888888',
-        'width': rect.width - 2,
-        'top': rect.bottom - 1,
-        'left': rect.left
-      })
-      .addEventListener(
-          'mousedown',
-          /** @param {Event} e */
-          (function(e) {
-            e.stopPropagation();
-          })
-      );
+  this.highlighted_ = element;
 
-  this.scroller_
-      .style({
-        'cursor': 'pointer',
-        'max-height': 200,
-        'overflow-y': 'auto',
-        'overflow-x': 'hidden'
-      })
-      .live('tr', 'mouseover', /** @this {HTMLTableRowElement} */ (
-          function() {
-            self.highlight_row_(
-                new rocket.Elements([this]),
-                false
-            );
-          }
-      ))
-      .live('tr', 'click', function() {
-        self.select_row_();
-      });
-
-  for (var row = 0; this.results_[row]; ++row) {
-    var tr = rocket.createElement('tr');
-    for (var col = 0; this.results_[row][col]; ++col) {
-      tr.appendChild(
-          /** @type {rocket.Elements} */
-          (rocket.createElement('td')
-              .innerHTML(this.results_[row][col])
-              .style({
-                'white-space': 'nowrap',
-                'overflow': 'hidden',
-                'text-overflow': 'ellipsis'
-              })
-          )
-      );
-    }
-    this.table_.tbody.appendChild(tr);
-  }
-
-  this.scroller_.appendChild(this.table_);
-  this.container_.appendChild(this.scroller_);
-  new rocket.Elements([document.body]).appendChild(this.container_);
-
-  delete this.result_;
-
-  this.dispatchEvent('render');
-
-};
+  this.highlighted_.style({
+    'backgroundColor': '#D5E2FF'
+  });
 
 
-/**
-@private
-*/
-rocket.AutoSuggest.prototype.dispose_ = function() {
+  if (scroll) {
 
-  if (this.container_) {
-
-    new rocket.Elements([document.body]).removeChild(this.container_);
-    this.container_.removeEventListener();
-    this.scroller_.removeEventListener();
-
-    delete this.container_;
-    delete this.scroller_;
-    delete this.highlighted_row_;
-
-  }
-
-};
-
-
-/**
-@private
-@param {rocket.Elements} row
-@param {boolean} adjust_scroll_top
-*/
-rocket.AutoSuggest.prototype.highlight_row_ = function(row, adjust_scroll_top) {
-
-  if (this.highlighted_row_) {
-    this.highlighted_row_.style({
-      'background-color': ''
-    });
-  }
-
-  this.highlighted_row_ = /** @type {rocket.Elements} */ (row.style({
-    'background-color': '#D5E2FF'
-  }));
-
-  if (adjust_scroll_top) {
-
-    var row_rect = this.highlighted_row_.getBoundingClientRect();
+    var row_rect = this.highlighted_.getBoundingClientRect();
     var container_rect = this.scroller_.getBoundingClientRect();
 
     if (row_rect.bottom > container_rect.bottom) {
@@ -448,29 +282,103 @@ rocket.AutoSuggest.prototype.highlight_row_ = function(row, adjust_scroll_top) {
 
 
 /**
-@private
+@param {Object.<number, string>} result
 */
-rocket.AutoSuggest.prototype.select_row_ = function() {
+rocket.AutoSuggest.prototype.setResult = function(result) {
+  this.results_ = [result];
+  this.enter();
+};
 
-  if (this.highlighted_row_) {
 
-    var result = this.results_[this.highlighted_row_.getAttribute('rowIndex')];
+/**
+@return {Object.<number, string>} result
+*/
+rocket.AutoSuggest.prototype.getResult = function() {
+  return this.result_;
+};
 
-    var val = result[0];
-    this.getInput()
-        .value(
-            this.query_ = val
-        )
-        .focus()
-        .setSelectionRange(
-            0,
-            val.length
-        );
-    this.dispose_();
+
+/**
+Override.
+*/
+rocket.AutoSuggest.prototype.enter = function() {
+
+  var result;
+
+  if (this.highlighted_) {
+    result = this.results_[this.highlighted_.getAttribute('rowIndex')];
+  }
+
+  if (!result && this.results_.length === 1) {
+    result = this.results_[0];
+  }
+
+  if (result) {
 
     this.result_ = result;
 
-    this.dispatchEvent('select');
+    this.getInput()
+      .value(result[0])
+      .setSelectionRange(0, result[0].length)
+      .focus();
+
+  }
+
+};
+
+
+/**
+Override.
+*/
+rocket.AutoSuggest.prototype.hide = function() {
+
+  this.container_.removeEventListener();
+
+  new rocket.Elements([document.body]).removeChild(this.container_);
+
+  delete this.container_;
+
+};
+
+
+/**
+Override.
+*/
+rocket.AutoSuggest.prototype.up = function() {
+
+  var rows = this.tbody_.children();
+
+  var row_index = this.highlighted_.getAttribute('rowIndex');
+
+  if (!row_index) {
+
+    this.highlight_(rows.i(rows.length - 1), true);
+
+  } else {
+
+    this.highlight_(rows.i(row_index - 1), true);
+
+  }
+
+};
+
+
+/**
+Override.
+*/
+rocket.AutoSuggest.prototype.down = function() {
+
+  var rows = this.tbody_.children();
+
+  var row_index = this.highlighted_.getAttribute('rowIndex');
+
+  if (rows[row_index + 1]) {
+
+    this.highlight_(rows.i(/** @type {number} */ (row_index + 1)), true);
+
+  } else {
+
+    this.highlight_(rows.i(0), true);
 
   }
 

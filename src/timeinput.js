@@ -21,25 +21,22 @@ rocket.TimeInput.prototype.container_;
 */
 rocket.TimeInput.prototype.show = function() {
 
-  this.dispose_();
-
   var rect = this.getInput().getBoundingClientRect();
 
-  /**
-  @type {rocket.Elements}
-  */
+  /** @type {HTMLTableCellElement} */
   var highlighted;
-  var highlighted_background;
-  var highlighted_color;
-  /**
-  @type {Object.<number, rocket.Elements>}
-  */
+
+  var previous_background_color;
+  var previous_color;
+
+  /** @type {Object.<number, HTMLTableCellElement>} */
   var selected = {};
 
   var self = this;
 
   this.container_ = rocket.createElement('div')
     .style({
+        'border-radius': 3,
         'position': 'absolute',
         'border': '1px solid #888888',
         'cursor': 'pointer',
@@ -48,30 +45,23 @@ rocket.TimeInput.prototype.show = function() {
         'top': rect.bottom - 1
       })
     .preventSelect()
-    .addEventListener(
-      'mousedown',
-      /** @type {function(Event)} */
-      (function(e) {
+    .addEventListener('mousedown', function(e) {
         e.stopPropagation();
-      }))
+      })
     .live('td', 'mouseover', /** @this {HTMLTableCellElement} */ (function() {
 
         if (highlighted) {
-          highlighted.style({
-            'background-color': highlighted_background,
-            'color': highlighted_color
-          });
+          highlighted.style.backgroundColor = previous_background_color;
+          highlighted.style.color = previous_color;
         }
 
-        highlighted = new rocket.Elements([this]);
+        previous_background_color = this.style.backgroundColor;
+        previous_color = this.style.color;
 
-        highlighted_background = highlighted.style('background-color');
-        highlighted_color = highlighted.style('color');
+        this.style.backgroundColor = '#D5E2FF';
+        this.style.color = '';
 
-        highlighted.style({
-          'background-color': '#D5E2FF',
-          'color': '#000000'
-        });
+        highlighted = this;
 
       }))
     .live('td', 'click', /** @this {HTMLTableCellElement} */ (function() {
@@ -79,19 +69,16 @@ rocket.TimeInput.prototype.show = function() {
         var row = /** @type {HTMLTableRowElement} */ (this.parentNode).rowIndex;
 
         if (selected[row]) {
-          selected[row].style({
-            'background-color': '',
-            'color': ''
-          });
+          selected[row].style.backgroundColor = '';
+          selected[row].style.color = '';
         }
 
         highlighted = null;
 
-        selected[row] = /** @type {rocket.Elements} */
-            (new rocket.Elements([this]).style({
-              'background-color': '#10246A',
-              'color': '#FFFFFF'
-            }));
+        selected[row] = this;
+
+        this.style.backgroundColor = '#10246A';
+        this.style.color = '#FFFFFF';
 
         var hour = selected[0];
         var minute = selected[1];
@@ -102,21 +89,36 @@ rocket.TimeInput.prototype.show = function() {
           self.getInput()
               .value(
                   rocket.padLeft(
-                      /** @type {string} */ (hour.innerHTML()),
+                      hour.innerHTML,
                       2,
                       '0'
                   ) + ':' +
-                  minute.innerHTML() + ' ' +
-                  meridian.innerHTML()
+                  minute.innerHTML + ' ' +
+                  meridian.innerHTML
               )
               .focus()
               .setSelectionRange(0, 8);
 
-          self.dispose_();
+          self.hide();
+          self.hidden(true);
 
         }
 
       }));
+
+  this.render_times_();
+
+  new rocket.Elements([document.body]).appendChild(this.container_);
+
+  this.container_.fit();
+
+};
+
+
+/**
+@private
+*/
+rocket.TimeInput.prototype.render_times_ = function() {
 
   var table = rocket.createElement('table');
   var tbody = rocket.createElement('tbody');
@@ -186,9 +188,21 @@ rocket.TimeInput.prototype.show = function() {
 
   this.container_.appendChild(table);
 
-  new rocket.Elements([document.body]).appendChild(this.container_);
+};
 
-  this.container_.fit();
+
+/**
+Override.
+*/
+rocket.TimeInput.prototype.enter = function() {
+
+  var time = rocket.strToTime(/** @type {string} */ (this.getInput().value()));
+
+  if (time) {
+
+    this.getInput().value(time);
+
+  }
 
 };
 
@@ -197,29 +211,10 @@ rocket.TimeInput.prototype.show = function() {
 */
 rocket.TimeInput.prototype.hide = function() {
 
-  var time =
-      rocket.strToTime(/** @type {string} */ (this.getInput().value()));
-  if (time) {
-    this.getInput().value(time);
-  }
+  this.container_.removeEventListener();
 
-  this.dispose_();
+  new rocket.Elements([document.body]).removeChild(this.container_);
 
-};
-
-
-/**
-@private
-*/
-rocket.TimeInput.prototype.dispose_ = function() {
-
-  if (this.container_) {
-
-    new rocket.Elements([document.body]).removeChild(this.container_);
-    this.container_.removeEventListener();
-
-    delete this.container_;
-
-  }
+  delete this.container_;
 
 };
