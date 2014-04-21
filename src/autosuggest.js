@@ -79,7 +79,9 @@ rocket.AutoSuggest.prototype.show = function() {
 
   var self = this;
 
-  this.results_ = [];
+  if (!this.results_) {
+    this.results_ = [];
+  }
 
   this.container_
     .style({
@@ -116,6 +118,8 @@ rocket.AutoSuggest.prototype.show = function() {
 
   this.container_.appendChild(this.scroller_);
   new rocket.Elements([document.body]).appendChild(this.container_);
+
+  this.dispatchEvent('render');
 
 };
 
@@ -318,9 +322,11 @@ rocket.AutoSuggest.prototype.enter = function() {
     this.result_ = result;
 
     this.getInput()
-      .value(result[0])
+      .value(result[0].replace(/<[^>]+>/g, ''))
       .setSelectionRange(0, result[0].length)
       .focus();
+
+    this.dispatchEvent('select');
 
   }
 
