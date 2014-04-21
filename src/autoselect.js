@@ -291,7 +291,7 @@ rocket.AutoSelect.prototype.setResult = function(result) {
 
 
 /**
-@return {Object.<number, string>} result
+@return {Object.<number, string>}
 */
 rocket.AutoSelect.prototype.getResult = function() {
   return this.result_;

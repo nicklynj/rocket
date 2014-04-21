@@ -291,7 +291,7 @@ rocket.AutoSuggest.prototype.setResult = function(result) {
 
 
 /**
-@return {Object.<number, string>} result
+@return {Object.<number, string>}
 */
 rocket.AutoSuggest.prototype.getResult = function() {
   return this.result_;
