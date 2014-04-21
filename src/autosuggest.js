@@ -103,11 +103,15 @@ rocket.AutoSuggest.prototype.show = function() {
             self.highlight_(new rocket.Elements([this]), false);
           }
       ))
-    .live('tr', 'click', function() {
-        self.enter();
-        self.hide();
-        self.hidden(true);
-      });
+    .live('tr', 'click', /** @this {HTMLTableRowElement} */ (
+          function() {
+            if (this.parentNode === self.tbody_[0]) {
+              self.enter();
+              self.hide();
+              self.hidden(true);
+            }
+          }
+      ));
 
   this.scroller_
       .style({
