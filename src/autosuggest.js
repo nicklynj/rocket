@@ -325,10 +325,13 @@ rocket.AutoSuggest.prototype.enter = function() {
 
     this.result_ = result;
 
-    this.getInput()
-      .value(result[0].replace(/<[^>]+>/g, ''))
-      .setSelectionRange(0, result[0].length)
-      .focus();
+    this.getInput().value(result[0].replace(/<[^>]+>/g, ''));
+
+    if (new rocket.Elements([document.body]).contains(this.getInput())) {
+      this.getInput()
+          .setSelectionRange(0, result[0].length)
+          .focus();
+    }
 
     this.dispatchEvent('select');
 
