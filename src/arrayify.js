@@ -9,14 +9,24 @@ Splits a string around spaces, commas, or any white space characters.
 
 @param {(string|Array.<string>)} str The string to split into an Array.
 @return {Array.<string>} The Array representation of the given string.
-@example
+@test {['foo', 'bar', 'baz']} A String transforms into an Array.
+// A String with either or both commas and or spaces.
 rocket.arrayify('foo,bar baz');
-// returns
-['foo','bar','baz']
-
-rocket.arrayify(['foo','bar,baz'];
-// returns
-['foo','bar,baz']
+@test {['foo', 'bar', 'baz', 'baz']} A String transforms into an Array.
+// A String with either or both commas and or whitespace.
+rocket.arrayify('foo,bar baz' + "\n" + 'baz');
+@test {['foo', 'bar']} A String with padding transforms into an Array.
+// A String leading and trailing white space
+rocket.arrayify(' foo, bar');
+@test {[]} A empty String transforms into an empty Array.
+// An empty String.
+rocket.arrayify('');
+@test {[]} A String with whitespace transforms into an empty Array.
+// An empty String.
+rocket.arrayify(' ');
+@test {['foo', 'bar,baz', 'baz baz']} An Array is not changed.
+// regardless if its contents contains commas or spaces
+rocket.arrayify(['foo', 'bar,baz', 'baz baz']);
 */
 rocket.arrayify = function(str) {
 
