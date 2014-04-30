@@ -18,21 +18,19 @@ class hermes {
 
 			$handle = fopen($file_root . '/' . $file_name, 'r');
 
-			$lines = null;
 			while ($line = fgets($handle)) {
 				$line = trim($line, "\r\n");
-				if (substr($line, 0, 3) === '/**') {
+				if ($line === '/**') {
 					$lines = array();
-				} else if (substr($line, 0, 2) === '*/') {
-					$line = trim(fgets($handle), "\r\n");
-					if(substr($line, -1, 1) === '='){
-						$line .= ' ' . trim(fgets($handle), "\r\n ");
+				} else if ($line === '*/') {
+          $first_line = trim(fgets($handle), "\r\n");
+          if (substr($first_line, -1) === '=') {
+            $first_line .= trim(fgets($handle), "\r\n");
+          }
+					if ($first_line) {
+						$this->parse($first_line, implode("\n", $lines));
 					}
-					if ($line) {
-						$this->parse(implode("\n", $lines), $line);
-					}
-					$lines = null;
-				} else if ($lines !== null) {
+				} else {
 					$lines[] = preg_replace('/^\*/','',$line);
 				}
 			}
@@ -52,7 +50,7 @@ class hermes {
 
 	}
 
-	private function parse($lines, $line) {
+	private function parse($first_line, $lines) {
 
 		$tags = $this->parse_tags($lines);
 
@@ -62,7 +60,7 @@ class hermes {
 			$type = 'interface';
 		} else if(isset($tags['namespace'])) {
 			$type = 'namespace';
-		} else if(strpos($line, '.prototype.') !== false) {
+		} else if(strpos($first_line, '.prototype.') !== false) {
 			$type = 'prototype';
 		} else {
 			$type = 'static';
@@ -76,12 +74,18 @@ class hermes {
 			$visibility = 'public';
 		}
 
-		$name = $this->parse_name($line);
+		$name = $this->parse_name($first_line);
+
+    $parent = $this->parse_parent($name);
 
 		$title = explode('.', $name);
 		$title = end($title);
 
 		$description = $this->parse_description($lines);
+
+    $summary = $this->parse_summary($tags, $description);
+
+    $lambda = (strpos($first_line, 'function(') !== false);
 
 		$parameters = array();
 		if (isset($tags['param'])) {
@@ -94,11 +98,11 @@ class hermes {
 			'name' => $name,
 			'title' => $title,
 			'description' => $description,
-			'summary' => $this->parse_summary($tags, $description),
-			'parent' => $this->parse_parent($name),
+			'summary' => $summary,
+			'parent' => $parent,
 			'type' => $type,
 			'visibility' => $visibility,
-			'lambda' => (strpos($line, 'function(') !== false),
+			'lambda' => $lambda,
 			'parameters' => $parameters,
 			'tags' => $tags,
 		);
@@ -112,28 +116,6 @@ class hermes {
 		} else {
 			return $name[0];
 		}
-	}
-	private function parse_tags($lines) {
-
-		$lines = preg_split('/^@/m', $lines);
-
-		unset($lines[0]);
-
-		$tags = array();
-
-		foreach (array_map('trim', $lines) as $tag) {
-			preg_match('/^(\w+)\s*(.*)/s',$tag,$match);
-			$tags[$match[1]][] = $match[2];
-		}
-
-		foreach ($tags as $name => $tag) {
-			if (method_exists($this, 'parse_tag_'.$name)) {
-				$tags[$name] = $this->{'parse_tag_'.$name}($tag);
-			}
-		}
-
-		return $tags;
-
 	}
 	private function parse_parent($name){
 		$parent = explode('.', $name);
@@ -162,84 +144,78 @@ class hermes {
 		}
 	}
 
-	private function parse_tag_param($tags){
-		$results = array();
-		foreach ($tags as $tag) {
-			preg_match('/^\{(.+?)\}\s+(\w+)\s*(.*?)$/s', $tag, $match);
-			$results[] = array(
-				'type' => $match[1],
-				'name' => $match[2],
-				'description' => $match[3],
-			);
+	private function parse_tags($lines) {
+
+		$lines = preg_split('/^@/m', $lines);
+
+		unset($lines[0]);
+
+		$tags = array();
+
+		foreach ($lines as $tag) {
+			preg_match('/^(\w+)\s*(.*)/s',trim($tag),$match);
+			$tags[$match[1]][] = $match[2];
 		}
-		return $results;
-	}
-	private function parse_tag_return($tags){
-		$results = array();
-		foreach ($tags as $tag) {
-			if(!preg_match('/^\{(.+?)\}\s+(.*?)$/s', $tag, $match)){
-        preg_match('/^\{(.+?)\}\s*(.*?)$/s', $tag, $match);
-      }
-			$results[] = array(
-				'type' => $match[1],
-				'description' => $match[2],
-			);
+
+		foreach ($tags as $name => $tag) {
+			if (method_exists($this, 'parse_tag_'.$name)) {
+        foreach($tag as $i => $value) {
+          $tags[$name][$i] = $this->{'parse_tag_'.$name}($value);
+        }
+			}
 		}
-		return $results;
+
+		return $tags;
+
 	}
-	private function parse_tag_test($tags){
-		$results = array();
-		foreach ($tags as $tag) {
-			preg_match('/^\{(.+?)\}\s+(.+?\.(?=\W))\s*(.+)/s', $tag, $match);
-			$results[] = array(
-				'result' => $match[1],
-				'description' => $match[2],
-				'code' => $match[3],
-			);
-		}
-		return $results;
+
+	private function parse_tag_param($tag){
+    preg_match('/^\{(.+?)\}\s+(\w+)\s*(.*?)$/s', $tag, $match);
+    return array(
+      'type' => $match[1],
+      'name' => $match[2],
+      'description' => $match[3],
+    );
 	}
-	private function parse_tag_implements($tags){
-		$results = array();
-		foreach ($tags as $tag) {
-			preg_match('/^\{(.+?)\}/', $tag, $match);
-			$results[] = array(
-				'type' => $match[1],
-			);
-		}
-		return $results;
+	private function parse_tag_return($tag){
+    if(!preg_match('/^\{(.+?)\}\s+(.*?)$/s', $tag, $match)){
+      preg_match('/^\{(.+?)\}\s*(.*?)$/s', $tag, $match);
+    }
+    return array(
+      'type' => $match[1],
+      'description' => $match[2],
+    );
 	}
-	private function parse_tag_extends($tags){
-		$results = array();
-		foreach ($tags as $tag) {
-			preg_match('/^\{(.+?)\}/', $tag, $match);
-			$results[] = array(
-				'type' => $match[1],
-			);
-		}
-		return $results;
+	private function parse_tag_test($tag){
+    preg_match('/^\{(.+?)\}\s+(.+?\.(?=\W))\s*(.+)/s', $tag, $match);
+    return array(
+      'result' => $match[1],
+      'description' => $match[2],
+      'code' => $match[3],
+    );
 	}
-	private function parse_tag_see($tags){
-		$results = array();
-		foreach ($tags as $tag) {
-			preg_match('/^\{(.+?)\}/', $tag, $match);
-			$results[] = array(
-				'type' => $match[1],
-			);
-		}
-		return $results;
+	private function parse_tag_link($tag){
+    preg_match('/\:\/\/(.+?)\//', $tag, $match);
+    return array(
+      'name' => $match[1],
+      'href' => $tag,
+    );
 	}
-	private function parse_tag_link($tags){
-		$results = array();
-		foreach ($tags as $tag) {
-			preg_match('/\:\/\/(.+?)\//', $tag, $match);
-			$results[] = array(
-				'name' => $match[1],
-				'href' => $tag,
-			);
-		}
-		return $results;
+  private function parse_tag_type($tag){
+    preg_match('/^\{(.+?)\}/', $tag, $match);
+    return array(
+      'type' => $match[1],
+    );
+  }
+	private function parse_tag_implements($tag){
+    return $this->parse_tag_type($tag);
 	}
+	private function parse_tag_extends($tag){
+    return $this->parse_tag_type($tag);
+	}
+	private function parse_tag_see($tag){
+    return $this->parse_tag_type($tag);
+  }
 
 }
 
