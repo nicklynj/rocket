@@ -20,6 +20,25 @@ Only the first Element of the optional context is used.
   The parent container within which to constrain queries.
 @return {rocket.Elements}
   A new rocket.Elements object containing the matched Elements.
+
+@test {true} The string "body".
+rocket.$('body')[0] === document.body;
+
+@test {true} The HTMLBodyElement.
+rocket.$(document.body)[0] === document.body;
+
+@test {true} The HTMLBodyElement in an Array.
+rocket.$([document.body])[0] === document.body;
+
+@test {true} The HTMLBodyElement length.
+rocket.$('body').length === 1;
+
+@test {true} No parameters.
+rocket.$().length === 0;
+
+@test {true} Empty Array.
+rocket.$([]).length === 0;
+
 */
 rocket.$ = function(query, opt_context) {
 
