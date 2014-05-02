@@ -21,6 +21,9 @@ class hermes {
 			while ($line = fgets($handle)) {
 				$line = trim($line, "\r\n");
 				if ($line === '/**') {
+          if (isset($previous_name)) {
+            $this->data[$previous_name]['source'] = trim(implode("\n", $lines));
+          }
 					$lines = array();
 				} else if ($line === '*/') {
           $first_line = trim(fgets($handle), "\r\n");
@@ -28,7 +31,8 @@ class hermes {
             $first_line .= trim(fgets($handle), "\r\n");
           }
 					if ($first_line) {
-						$this->parse($first_line, implode("\n", $lines));
+						$previous_name = $this->parse($first_line, implode("\n", $lines));
+            $lines = array($first_line);
 					}
 				} else {
 					$lines[] = preg_replace('/^\*/','',$line);
@@ -36,6 +40,8 @@ class hermes {
 			}
 
 		}
+
+    $this->data[$previous_name]['source'] = trim(implode("\n", $lines));
 
 		foreach ($this->data as $parent_name => $doc) {
 			$this->data[$parent_name]['children'] = array();
@@ -94,7 +100,7 @@ class hermes {
 			}
 		}
 
-		$this->data[$name] = array(
+    $this->data[$name] = array(
 			'name' => $name,
 			'title' => $title,
 			'description' => $description,
@@ -106,6 +112,8 @@ class hermes {
 			'parameters' => $parameters,
 			'tags' => $tags,
 		);
+    
+		return $name;
 
 	}
 

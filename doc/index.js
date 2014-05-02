@@ -282,6 +282,17 @@ rocket.ready(function() {
       }
     }
   };
+   
+  contents.source = function(){
+    contents.apply(this, arguments);
+  };
+  $.inherits(contents.source, contents);
+  contents.source.prototype.legend = 'Source';
+  contents.source.prototype.render_contents = function(parent) {
+    if (docs[this.name].source) {
+      lex(parent, docs[this.name].source);
+    }
+  };
 
   contents.tests = function(){
     contents.apply(this, arguments);
@@ -455,10 +466,11 @@ rocket.ready(function() {
     (new contents.prototypes(this.name)).render(parent);
     (new contents.types(this.name)).render(parent);
     (new contents.returns(this.name)).render(parent);
-    (new contents.examples(this.name)).render(parent);
-    (new contents.tests(this.name)).render(parent);
     (new contents.sees(this.name)).render(parent);
+    (new contents.examples(this.name)).render(parent);
     (new contents.links(this.name)).render(parent);
+    (new contents.tests(this.name)).render(parent);
+    (new contents.source(this.name)).render(parent);
   };
   layer.prototype.render_test_runner = function(parent) {
     (new test_runner(parent, this.name));

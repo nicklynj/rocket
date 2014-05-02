@@ -1,12 +1,25 @@
 
 
 /**
-Sets/gets cookies.
+Sets/gets cookie values.
 
 @param {(string|Object.<string, string>)=} opt_values
   Value to get or key/values to set.
 @param {string=} opt_value Value to set.
 @return {(Object.<string, string>|string)} The cookie.
+
+@test {'bar'} Set and get the value of foo.
+rocket.cookie('foo', 'bar');
+rocket.cookie('foo');
+
+@test {'foo'} Set and get the value of bar.
+rocket.cookie({'bar': 'foo'});
+rocket.cookie('bar');
+
+@test {'bar=foo'} Set and get the value of "foo=bar".
+rocket.cookie({'foo=bar': 'bar=foo'});
+rocket.cookie('foo=bar');
+
 */
 rocket.cookie = function(opt_values, opt_value) {
 
@@ -52,14 +65,20 @@ rocket.cookie = function(opt_values, opt_value) {
 */
 rocket.cookie.parse_cookie_ = function() {
 
-  var cookie = document.cookie.split('; ');
+  var cookie = document.cookie;
   var ret = {};
 
-  for (var i = 0, len = cookie.length; i < len; ++i) {
+  if (cookie) {
 
-    var pos = cookie[i].indexOf('=');
-    ret[decodeURIComponent(cookie[i].substr(0, pos))] =
-        decodeURIComponent(cookie[i].substr(pos + 1));
+    cookie = cookie.split('; ');
+
+    for (var i = 0, len = cookie.length; i < len; ++i) {
+
+      var pos = cookie[i].indexOf('=');
+      ret[decodeURIComponent(cookie[i].substr(0, pos))] =
+          decodeURIComponent(cookie[i].substr(pos + 1));
+
+    }
 
   }
 

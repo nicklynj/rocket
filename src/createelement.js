@@ -8,6 +8,8 @@ created Element.
   The tagName of the DOM element to create.
 @return {rocket.Elements} The new rocket.Elements containing the newly created
 Element.
+@example
+rocket.createElement('div');
 */
 rocket.createElement = function(tag_name) {
   return new rocket.Elements([document.createElement(tag_name)]);
