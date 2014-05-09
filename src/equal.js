@@ -55,10 +55,18 @@ baz.bar = bar;
 baz.baz = 'baz';
 
 rocket.equal(foo, bar);
+@test {true} HTMLDocumentElement.
+rocket.equal(document, document);
+@test {false} HTMLDocumentElement and HTMLBodyElement.
+rocket.equal(document.body, document);
+@test {false} HTMLDocumentElement and HTMLBodyElement.
+rocket.equal(document, document.body);
+@test {true} HTMLBodyElement.
+rocket.equal(document.body, document.body);
 */
 rocket.equal = function(a, b) {
 
-  return rocket.equal.equal_(a, b, [a], [b]);
+  return rocket.equal.equal_(a, b, [], []);
 
 };
 
@@ -74,6 +82,10 @@ Equal function with reference Array.
 @return {boolean}
 */
 rocket.equal.equal_ = function(a, b, as, bs) {
+
+  if (a === b) {
+    return true;
+  }
 
   for (var i = 0; as[i]; ++i) {
     if ((as[i] === a) && (bs[i] === b)) {
