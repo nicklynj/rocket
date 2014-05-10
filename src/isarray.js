@@ -11,6 +11,8 @@ rocket.isArray([]);
 rocket.isArray({'length': 0});
 @test {false} A string.
 rocket.isArray('foo');
+@test {false} A function.
+rocket.isArray(function(){});
 */
 rocket.isArray = function(obj) {
 
@@ -18,7 +20,7 @@ rocket.isArray = function(obj) {
       (obj &&
           (typeof /** @type {{length: (number|undefined)}} */
               (obj).length === 'number') &&
-                  (typeof obj !== 'string')) ||
+                  (typeof obj === 'object')) ||
       false
   );
 

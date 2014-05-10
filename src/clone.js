@@ -24,8 +24,33 @@ var foo = {'a': 'b', 'c': [0, 1]};
 var foo = {'a': 'b', 'c': [0, 1]};
 rocket.equal(foo, rocket.clone(foo));
 
+@test {true} Clone an Object with circular references.
+var foo = {};
+var bar = {};
+
+foo.foo = bar;
+bar.bar = foo;
+
+rocket.equal(foo, rocket.clone(foo));
+
 */
 rocket.clone = function(obj) {
+
+  return rocket.clone.clone_(obj, [], []);
+
+};
+
+
+/**
+Clone heler.
+
+@private
+@param {Object} obj
+@param {Array.<Object>} references
+@param {Array.<Object>} copies
+@return {Object}
+*/
+rocket.clone.clone_ = function(obj, references, copies) {
 
   var clone;
 
@@ -33,26 +58,40 @@ rocket.clone = function(obj) {
 
     return obj;
 
-  } else if (rocket.isArray(obj)) {
+  }
+
+  var pos = rocket.indexOf(references, obj);
+
+  if (pos !== -1) {
+
+    return copies[pos];
+
+  }
+
+  if (rocket.isArray(obj)) {
 
     clone = [];
 
-    for (var i = 0, len = /** @type {Array} */ (obj).length; i < len; ++i) {
-      clone.push(obj[i]);
-    }
+    references.push(obj);
+    copies.push(clone);
 
-    return clone;
+    for (var i = 0, len = /** @type {Array} */ (obj).length; i < len; ++i) {
+      clone.push(rocket.clone.clone_(obj[i], references, copies));
+    }
 
   } else {
 
     clone = {};
 
+    references.push(obj);
+    copies.push(clone);
+
     for (var i in obj) {
-      clone[i] = rocket.clone(obj[i]);
+      clone[i] = rocket.clone.clone_(obj[i], references, copies);
     }
 
-    return clone;
-
   }
+
+  return clone;
 
 };
