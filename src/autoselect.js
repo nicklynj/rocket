@@ -23,13 +23,19 @@ rocket.AutoSelect = function() {
           'position': 'absolute',
           'background-color': '#FFFFFF',
           'border': '1px solid #888888',
+          'top': 0,
           'width': rect.width - 2,
-          'top': rect.top - 15,
           'left': rect.left
         })
       .innerHTML(/** @type {string} */ (this.getResult() || '&nbsp;'));
 
     new rocket.Elements([document.body]).appendChild(this.place_holder_);
+
+    var place_holder_rect = this.place_holder_.getBoundingClientRect();
+
+    this.place_holder_.style({
+      'top': rect.top - place_holder_rect.height + 1
+    });
 
   }));
 
@@ -50,3 +56,11 @@ rocket.inherits(rocket.AutoSelect, rocket.AutoSuggest);
 @type {rocket.Elements}
 */
 rocket.AutoSelect.prototype.place_holder_;
+
+
+/**
+@return {rocket.Elements}
+*/
+rocket.AutoSelect.prototype.getPlaceHolder = function() {
+  return this.place_holder_;
+};

@@ -102,4 +102,4 @@ Divider between assuming 19th or 20th century.
 
 @private
 */
-rocket.strToDate.century_divider_ = 30;
+rocket.strToDate.century_divider_ = (new Date()).getFullYear() - 2000 + 10;

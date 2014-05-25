@@ -291,7 +291,7 @@ rocket.ready(function() {
   contents.source.prototype.render_contents = function(parent) {
     parent.appendChild($.createElement('a').setAttribute({
       'href': '../src/' + docs[this.name].file_name
-    }).innerHTML('Source Code'));
+    }).innerHTML('Download'));
     if (docs[this.name].source) {
       lex(parent, docs[this.name].source);
     }
