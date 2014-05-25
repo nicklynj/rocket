@@ -246,6 +246,8 @@ rocket.Input.prototype.dispose = function() {
 
     delete this.input_element_;
 
+    this.removeEventListener();
+
   }
 
 };

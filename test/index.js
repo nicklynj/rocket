@@ -50,19 +50,20 @@ rocket.ready(function(){
 
   // new rocket.AutoTab([$('input').i(0), $('input').i(1), $('input').i(2)]);
 
-  (window.as = new rocket.AutoSuggest()).render();
-  (window.as = new rocket.AutoSelect()).render();
+  (window.asg = new rocket.AutoSuggest()).render();
+  (window.asl = new rocket.AutoSelect()).render();
   (window.ti = new rocket.TimeInput()).render();
   (window.di = new rocket.DateInput()).render();
   (window.i = new rocket.DateInput()).render();
   
   
   var foo = [];
-  for(var i = 0; i < 100; ++i){
+  for(var i = 0; i < 1000; ++i){
     foo.push([''+$.random(1000000,1001000)]);
   }
   
-  as.data(foo);
+  asl.data(foo);
+  asg.data(foo);
   
   $('body,html').style({'height': '100%'});
   

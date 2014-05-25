@@ -351,6 +351,8 @@ rocket.AutoSuggest.prototype.hide = function() {
 
   delete this.container_;
 
+  this.dispatchEvent('hide');
+
 };
 
 
