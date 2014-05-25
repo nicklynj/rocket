@@ -293,8 +293,7 @@ rocket.AutoSuggest.prototype.highlight_ = function(element, scroll) {
 @param {Object.<number, string>} result
 */
 rocket.AutoSuggest.prototype.setResult = function(result) {
-  this.results_ = [result];
-  this.enter();
+  this.enter(result);
 };
 
 
@@ -308,17 +307,26 @@ rocket.AutoSuggest.prototype.getResult = function() {
 
 /**
 Override.
+@param {Object.<number, string>=} opt_result
 */
-rocket.AutoSuggest.prototype.enter = function() {
+rocket.AutoSuggest.prototype.enter = function(opt_result) {
 
   var result;
 
-  if (this.highlighted_) {
-    result = this.results_[this.highlighted_.getAttribute('rowIndex')];
-  }
+  if (opt_result) {
 
-  if (!result && this.results_.length === 1) {
-    result = this.results_[0];
+    result = opt_result;
+
+  } else {
+
+    if (this.highlighted_) {
+      result = this.results_[this.highlighted_.getAttribute('rowIndex')];
+    }
+
+    if (!result && this.results_.length === 1) {
+      result = this.results_[0];
+    }
+
   }
 
   if (result) {

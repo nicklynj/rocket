@@ -11,39 +11,49 @@ rocket.AutoSelect = function() {
 
   this.addEventListener('render', /** @this {rocket.AutoSelect} */ (function() {
 
-    this.place_holder_ = rocket.createElement('div');
+    if (this.getResult()) {
 
-    this.getInput().value('');
+      this.place_holder_ = rocket.createElement('div');
 
-    var rect = this.getInput().getBoundingClientRect();
+      this.getInput().value('');
 
-    this.place_holder_
-      .style({
-          'border-radius': 3,
-          'position': 'absolute',
-          'background-color': '#FFFFFF',
-          'border': '1px solid #888888',
-          'top': 0,
-          'width': rect.width - 2,
-          'left': rect.left
-        })
-      .innerHTML(/** @type {string} */ (this.getResult() || '&nbsp;'));
+      var rect = this.getInput().getBoundingClientRect();
 
-    new rocket.Elements([document.body]).appendChild(this.place_holder_);
+      this.place_holder_
+        .style({
+            'border-radius': 3,
+            'position': 'absolute',
+            'background-color': '#FFFFFF',
+            'border': '1px solid #888888',
+            'top': 0,
+            'width': rect.width - 2,
+            'left': rect.left
+          })
+        .innerHTML(this.getResult()[0]);
 
-    var place_holder_rect = this.place_holder_.getBoundingClientRect();
+      new rocket.Elements([document.body]).appendChild(this.place_holder_);
 
-    this.place_holder_.style({
-      'top': rect.top - place_holder_rect.height + 1
-    });
+      var place_holder_rect = this.place_holder_.getBoundingClientRect();
+
+      this.place_holder_.style({
+        'top': rect.top - place_holder_rect.height + 1
+      });
+
+    }
 
   }));
 
   this.addEventListener('hide', /** @this {rocket.AutoSelect} */ (function() {
 
-    this.getInput().value(/** @type {string} */ (this.getResult() || ''));
+    if (this.place_holder_) {
 
-    new rocket.Elements([document.body]).removeChild(this.place_holder_);
+      this.getInput().value(this.getResult()[0]);
+
+      new rocket.Elements([document.body]).removeChild(this.place_holder_);
+
+      delete this.place_holder_;
+
+    }
 
   }));
 
