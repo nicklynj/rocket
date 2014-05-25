@@ -289,6 +289,9 @@ rocket.ready(function() {
   $.inherits(contents.source, contents);
   contents.source.prototype.legend = 'Source';
   contents.source.prototype.render_contents = function(parent) {
+    parent.appendChild($.createElement('a').setAttribute({
+      'href': '../src/' + docs[this.name].file_name
+    }).innerHTML('Source Code'));
     if (docs[this.name].source) {
       lex(parent, docs[this.name].source);
     }

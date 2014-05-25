@@ -1,12 +1,12 @@
 <?php
 
-new hermes('src','doc');
+new doc('src');
 
-class hermes {
+class doc {
 
 	private $data;
 
-	function __construct($file_root, $documentation_root) {
+	function __construct($file_root) {
 
 		$this->data = array();
 
@@ -31,7 +31,7 @@ class hermes {
             $first_line .= trim(fgets($handle), "\r\n");
           }
 					if ($first_line) {
-						$previous_name = $this->parse($first_line, implode("\n", $lines));
+						$previous_name = $this->parse($first_line, implode("\n", $lines), $file_name);
             $lines = array($first_line);
 					}
 				} else {
@@ -52,11 +52,11 @@ class hermes {
 			}
 		}
 
-		file_put_contents($documentation_root . '/docs.js', 'var docs = ' . json_encode($this->data));
+		file_put_contents('build/docs.js', 'var docs = ' . json_encode($this->data));
 
 	}
 
-	private function parse($first_line, $lines) {
+	private function parse($first_line, $lines, $file_name) {
 
 		$tags = $this->parse_tags($lines);
 
@@ -101,6 +101,7 @@ class hermes {
 		}
 
     $this->data[$name] = array(
+      'file_name' => $file_name,
 			'name' => $name,
 			'title' => $title,
 			'description' => $description,

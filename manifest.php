@@ -4,70 +4,90 @@ new manifest('src');
 
 class manifest {
 
+  private $var = '(?:[\w\$][\d\w\$]*)';
+
 	function __construct($file_root) {
 
 		$data = array();
-
-    $var = '(?:[\w\$][\d\w\$]*)';
 
 		foreach (scandir($file_root) as $file_name) {
 
 			if (in_array($file_name, array('.', '..', 'externs.js'))) {
 				continue;
 			}
+      
+      $data[] = $this->get_dependencies($file_root, $file_name);
+      
+    }
+    
+    $this->resolve_dependencies($data);
+    
+    $file_paths = array();
 
-      $contents = file_get_contents($file_root . DIRECTORY_SEPARATOR . $file_name);
+    for($i = 0; isset($data[$i]); ++$i) {
+      $file_paths[] = $data[$i]['file_path'];
+    }
 
-      $contents = preg_replace('/\/\*\*.+?\*\//s', '', $contents);
+    file_put_contents('build/manifest_lines', implode("\n", $file_paths));
+    file_put_contents('build/manifest_spaces', implode(" ", $file_paths));
 
-      $dep = array(
-        'file_path' => $file_root . DIRECTORY_SEPARATOR . $file_name,
-        'provides' => array(),
-        'requires' => array(),
-      );
+	}
+  
+  private function get_dependencies($file_root, $file_name) {
 
-      preg_match_all('/^(?:var )?('.$var.'(?:\.'.$var.')*)\s+=/m', $contents, $matches);
+    $contents = file_get_contents($file_root . DIRECTORY_SEPARATOR . $file_name);
 
-      foreach ($matches[1] as $match) {
+    $contents = preg_replace('/\/\*\*.+?\*\//s', '', $contents);
 
-        $dep['provides'][$match] = true;
+    $dep = array(
+      'file_path' => $file_root . DIRECTORY_SEPARATOR . $file_name,
+      'provides' => array(),
+      'requires' => array(),
+    );
 
-        $match = explode('.', $match);
-        while(count($match)) {
+    preg_match_all('/^(?:var )?('.$this->var.'(?:\.'.$this->var.')*)\s+=/m', $contents, $matches);
+
+    foreach ($matches[1] as $match) {
+
+      $dep['provides'][$match] = true;
+
+      $match = explode('.', $match);
+      while(count($match)) {
+        array_pop($match);
+        if (end($match) === 'prototype') {
           array_pop($match);
-          if (end($match) === 'prototype') {
-            array_pop($match);
-          }
-          $req = implode('.', $match);
-          if ($req) {
-            $dep['requires'][$req] = true;
-          }
         }
-      }
-
-      foreach ($dep['requires'] as $req => $foo) {
-        if (isset($dep['provides'][$req])) {
-          unset($dep['requires'][$req]);
-        }
-      }
-
-      preg_match_all('/^('.$var.'(\.'.$var.')*)\(\s*(.+?)\s*\);/sm', $contents, $matches);
-
-
-      foreach ($matches[1] as $match) {
-        $dep['requires'][$match] = true;
-      }
-
-      foreach ($matches[3] as $match) {
-        foreach (preg_split('/\s*,\s*/', $match) as $req) {
+        $req = implode('.', $match);
+        if ($req) {
           $dep['requires'][$req] = true;
         }
       }
-
-      $data[] = $dep;
-
     }
 
+    foreach ($dep['requires'] as $req => $foo) {
+      if (isset($dep['provides'][$req])) {
+        unset($dep['requires'][$req]);
+      }
+    }
+
+    preg_match_all('/^('.$this->var.'(\.'.$this->var.')*)\(\s*(.+?)\s*\);/sm', $contents, $matches);
+
+
+    foreach ($matches[1] as $match) {
+      $dep['requires'][$match] = true;
+    }
+
+    foreach ($matches[3] as $match) {
+      foreach (preg_split('/\s*,\s*/', $match) as $req) {
+        $dep['requires'][$req] = true;
+      }
+    }
+
+    return $dep;
+    
+  }
+
+  private function resolve_dependencies(&$data){
     for($i = 0; isset($data[$i]); ++$i) {
       foreach ($data[$i]['requires'] as $req => $foo) {
         for($j = 0; isset($data[$j]); ++$j) {
@@ -83,16 +103,7 @@ class manifest {
         }
       }
     }
-
-    $file_paths = array();
-
-    for($i = 0; isset($data[$i]); ++$i) {
-      $file_paths[] = $data[$i]['file_path'];
-    }
-
-    file_put_contents('build/manifest', implode("\n", $file_paths));
-
-	}
-
+  }
+  
 }
 
