@@ -56,6 +56,20 @@ rocket.ready(function(){
   (window.di = new rocket.DateInput()).render();
   (window.i = new rocket.DateInput()).render();
   
+  var d = $.createElement('div').innerHTML('draggable').style({
+    'padding': 50,
+    'width': 600,
+    'background-color': '#DDDDDD',
+    'border': '1px solid red'
+  });
+  
+  $('body').appendChild(d);
+  
+  (window.d = new rocket.Draggable()).decorate(d);
+  
+  setTimeout(function(){
+    window.d.bound($('body').getBoundingClientRect());
+  }, 1);
   
   var foo = [];
   for(var i = 0; i < 1000; ++i){
@@ -66,5 +80,13 @@ rocket.ready(function(){
   asg.data(foo);
   
   $('body,html').style({'height': '100%'});
+  
+  $('body').appendChild($.createElement('div').innerHTML(Math.random()));
+  $('body').appendChild($.createElement('div').innerHTML(Math.random()));
+  $('body').appendChild($.createElement('div').innerHTML(Math.random()));
+  $('body').appendChild($.createElement('div').innerHTML(Math.random()));
+  $('body').appendChild($.createElement('div').innerHTML(Math.random()));
+  $('body').appendChild($.createElement('div').innerHTML(Math.random()));
+  $('body').appendChild($.createElement('div').innerHTML(Math.random()));
   
 });

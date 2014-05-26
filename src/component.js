@@ -93,9 +93,27 @@ rocket.Component.prototype.render = function(opt_parent) {
 
 
 /**
+@param {rocket.Elements} element
+*/
+rocket.Component.prototype.setComponentElement = function(element) {
+  this.component_element_ = element;
+};
+
+
+/**
 dispose
 */
 rocket.Component.prototype.dispose = function() {
+
+  this.disposeInternal();
+
+};
+
+
+/**
+disposeInternal
+*/
+rocket.Component.prototype.disposeInternal = function() {
 
   if (!this.component_disposed_) {
 

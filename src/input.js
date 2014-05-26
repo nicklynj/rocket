@@ -240,13 +240,9 @@ rocket.Input.prototype.dispose = function() {
         this.input_document_listener_
     );
 
-    if (this.rendered()) {
-      this.input_element_.parentNode().removeChild(this.input_element_);
-    }
-
     delete this.input_element_;
 
-    this.removeEventListener();
+    this.disposeInternal();
 
   }
 
