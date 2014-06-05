@@ -21,7 +21,11 @@ position.
 @constructor
 @extends {rocket.Component}
 */
-rocket.Draggable = function() {};
+rocket.Draggable = function() {
+
+  this.bounds_ = new rocket.Elements([document.body]);
+
+};
 rocket.inherits(rocket.Draggable, rocket.Component);
 
 
@@ -61,6 +65,13 @@ rocket.Draggable.prototype.fixY_ = false;
 
 
 /**
+@private
+@type {boolean}
+*/
+rocket.Draggable.prototype.fill_ = true;
+
+
+/**
 Prevent the Element from being moved on the horizontal x axis.
 
 @param {boolean=} opt_fix
@@ -95,36 +106,49 @@ rocket.Draggable.prototype.fixY = function(opt_fix) {
 
 
 /**
-@private
-@type {ClientRect}
+Fill the empty space created by appending the draggable Element to a container
+with its position set to absolute.
+
+Defaults to true.
+
+@param {boolean=} opt_fill
+@return {boolean} Whether to draw a filler Element.
 */
-rocket.Draggable.prototype.bounds_;
-
-
-/**
-Define a bounding rectangle to restrict the movement of the Element.
-
-@param {ClientRect} rect
-  An Object with: left, top, right, bottom number properties.
-@return {ClientRect}
-  The current bounding ClientRect.
-*/
-rocket.Draggable.prototype.bound = function(rect) {
+rocket.Draggable.prototype.fill = function(opt_fill) {
 
   if (arguments.length) {
-    this.bounds_ = rect;
+    this.fill_ = /** @type {boolean} */ (opt_fill);
   }
 
-  return this.bounds_;
+  return this.fill_;
 
 };
 
 
 /**
 @private
-@type {ClientRect}
+@type {rocket.Elements}
 */
-rocket.Draggable.prototype.rect_;
+rocket.Draggable.prototype.bounds_;
+
+
+/**
+Define a bounding Element to restrict the movement of the draggable Element.
+
+@param {rocket.Elements=} opt_bounding_element
+  A bounding Element.
+@return {rocket.Elements}
+  The current bounding Element.
+*/
+rocket.Draggable.prototype.bound = function(opt_bounding_element) {
+
+  if (arguments.length) {
+    this.bounds_ = rocket.$(opt_bounding_element);
+  }
+
+  return this.bounds_;
+
+};
 
 
 /**
@@ -145,7 +169,7 @@ rocket.Draggable.prototype.element_;
 @private
 @type {function()}
 */
-rocket.Draggable.prototype.mouse_up_leave_handler_;
+rocket.Draggable.prototype.mouse_up_handler_;
 
 
 /**
@@ -159,6 +183,11 @@ rocket.Draggable.prototype.decorate = function(element) {
 
   var doc = new rocket.Elements([document]);
 
+  /** @type {ClientRect} */
+  var dragging_rect;
+  /** @type {ClientRect} */
+  var bounding_rect;
+
   var mouse_x;
   var mouse_y;
 
@@ -166,14 +195,17 @@ rocket.Draggable.prototype.decorate = function(element) {
 
   var mouse_down_handler = /** @param {Event} e */ (function(e) {
 
+    dragging_rect = self.container_.getBoundingClientRect();
+    bounding_rect = self.bounds_.getBoundingClientRect();
+
     mouse_x = e.pageX;
     mouse_y = e.pageY;
 
     doc
       .addEventListener('mousemove', mouse_move_handler)
       .addEventListener(
-            ['mouseup', 'mouseleave'],
-            self.mouse_up_leave_handler_
+            'mouseup',
+            self.mouse_up_handler_
         );
 
   });
@@ -182,85 +214,54 @@ rocket.Draggable.prototype.decorate = function(element) {
 
     if (!self.fixX_) {
 
-      var left = self.current_left_ + e.pageX - mouse_x;
-
-      if (
-          self.bounds_ &&
-              (
-              (left < self.bounds_.left) ||
-              ((left + self.rect_.width) > self.bounds_.right)
-              )
-      ) {
-
-        left = self.current_left_;
-
-      } else {
-
-        self.current_left_ = left;
-
-      }
+      var left = dragging_rect.left + e.pageX - mouse_x;
 
       self.container_.style({
-        'left': left
+        'left': rocket.clamp(
+            left,
+            bounding_rect.left,
+            bounding_rect.width - dragging_rect.width
+        )
       });
-
-      mouse_x = e.pageX;
 
     }
 
     if (!self.fixY_) {
 
-      var top = self.current_top_ + e.pageY - mouse_y;
-
-      if (
-          self.bounds_ &&
-              (
-              (top < self.bounds_.top) ||
-              ((top + self.rect_.height) > self.bounds_.bottom)
-              )
-      ) {
-
-        top = self.current_top_;
-
-      } else {
-
-        self.current_top_ = top;
-
-      }
+      var top = dragging_rect.top + e.pageY - mouse_y;
 
       self.container_.style({
-        'top': top
+        'top': rocket.clamp(
+            top,
+            bounding_rect.top,
+            bounding_rect.height - dragging_rect.height
+        )
       });
-
-      mouse_y = e.pageY;
 
     }
 
   });
 
-  this.mouse_up_leave_handler_ = function() {
+  this.mouse_up_handler_ = function() {
     doc
       .removeEventListener('mousemove', mouse_move_handler)
       .removeEventListener(
-            ['mouseup', 'mouseleave'],
-            self.mouse_up_leave_handler_
+            'mouseup',
+            self.mouse_up_handler_
         );
   };
 
-  this.rect_ = element.getBoundingClientRect();
-
-  this.current_left_ = this.rect_.left;
-  this.current_top_ = this.rect_.top;
+  var rect = element.getBoundingClientRect();
 
   this.container_ =
       rocket.createElement('div')
       .preventSelect()
       .style({
         'position': 'absolute',
-        'left': this.rect_.left,
-        'top': this.rect_.top,
-        'width': this.rect_.width,
-        'height': this.rect_.height
+        'left': rect.left,
+        'top': rect.top,
+        'width': rect.width,
+        'height': rect.height
       })
       .addEventListener('mousedown', mouse_down_handler);
 
@@ -272,14 +273,18 @@ rocket.Draggable.prototype.decorate = function(element) {
 
     parent.insertBefore(this.container_, element);
 
-    this.filler_ =
-        /** @type {rocket.Elements} */ (
-        rocket.createElement('div').style({
-          'width': this.rect_.width,
-          'height': this.rect_.height
-        }));
+    if (this.fill_) {
 
-    parent.insertBefore(this.filler_, element);
+      this.filler_ =
+          /** @type {rocket.Elements} */ (
+          rocket.createElement('div').style({
+            'width': rect.width,
+            'height': rect.height
+          }));
+
+      parent.insertBefore(this.filler_, element);
+
+    }
 
   }
 
@@ -303,10 +308,13 @@ rocket.Draggable.prototype.dispose = function() {
 
     this.container_.removeEventListener();
 
-    this.mouse_up_leave_handler_();
+    this.mouse_up_handler_();
 
     this.container_.parentNode().removeChild(this.container_);
-    this.filler_.parentNode().removeChild(this.filler_);
+
+    if (this.fill_) {
+      this.filler_.parentNode().removeChild(this.filler_);
+    }
 
     this.removeEventListener();
 

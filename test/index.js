@@ -67,10 +67,6 @@ rocket.ready(function(){
   
   (window.d = new rocket.Draggable()).decorate(d);
   
-  setTimeout(function(){
-    window.d.bound($('body').getBoundingClientRect());
-  }, 1);
-  
   var foo = [];
   for(var i = 0; i < 1000; ++i){
     foo.push([''+$.random(1000000,1001000)]);
