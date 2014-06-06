@@ -2629,39 +2629,51 @@ rocket.Elements.prototype.style_set_ = function(styles) {
 
   var i = 0;
   var len = this.length;
-  var style;
-  var camel_cased_style;
-  var transformer;
 
   /** @type {string} */
   var key;
 
-  for (; i < len; ++i) {
+  for (key in styles) {
 
-    style = /** @type {Element} */ (this[i]).style;
+    this.style_set_helper_(key, styles[key]);
 
-    for (key in styles) {
+  }
 
-      camel_cased_style = this.style_camel_case_(key);
+};
 
-      if (transformer =
-              rocket.Elements.style_transformers_[camel_cased_style]) {
 
-        transformer.set(this[i], styles[key]);
+/**
+@private
+@param {string} key
+@param {(string|number)} value
+*/
+rocket.Elements.prototype.style_set_helper_ =
+    function(key, value) {
 
+  var camel_cased_style = this.style_camel_case_(key);
+
+  var transformer = rocket.Elements.style_transformers_[camel_cased_style];
+
+  for (var i = 0, len = this.length; i < len; ++i) {
+
+    if (transformer = rocket.Elements.style_transformers_[camel_cased_style]) {
+
+      transformer.set(this[i], value);
+
+    } else {
+
+      if (typeof value === 'number') {
+        /** @type {Element} */ (this[i]).style[camel_cased_style] =
+            value + 'px';
       } else {
-
-        if (typeof styles[key] === 'number') {
-          style[camel_cased_style] = styles[key] + 'px';
-        } else {
-          style[camel_cased_style] = styles[key];
-        }
-
+        /** @type {Element} */ (this[i]).style[camel_cased_style] =
+            value;
       }
 
     }
 
   }
+
 
 };
 
