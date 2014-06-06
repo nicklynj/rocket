@@ -40,6 +40,13 @@ rocket.Draggable.prototype.container_;
 @private
 @type {number}
 */
+rocket.Draggable.z_index_ = 0;
+
+
+/**
+@private
+@type {number}
+*/
 rocket.Draggable.prototype.current_left_;
 
 
@@ -69,6 +76,13 @@ rocket.Draggable.prototype.fixY_ = false;
 @type {boolean}
 */
 rocket.Draggable.prototype.fill_ = true;
+
+
+/**
+@private
+@type {boolean}
+*/
+rocket.Draggable.prototype.z_index_ = false;
 
 
 /**
@@ -121,6 +135,26 @@ rocket.Draggable.prototype.fill = function(opt_fill) {
   }
 
   return this.fill_;
+
+};
+
+
+/**
+Increment a global zIndex counter and assign it to any Draggable Element when
+dragging is initiated.
+
+Defaults to false.
+
+@param {boolean=} opt_z_index
+@return {boolean} Whether to increment the zIndex.
+*/
+rocket.Draggable.prototype.zIndex = function(opt_z_index) {
+
+  if (arguments.length) {
+    this.z_index_ = /** @type {boolean} */ (opt_z_index);
+  }
+
+  return this.z_index_;
 
 };
 
@@ -201,6 +235,12 @@ rocket.Draggable.prototype.decorate = function(element) {
     mouse_x = e.pageX;
     mouse_y = e.pageY;
 
+    if (self.z_index_) {
+      self.container_.style({
+        'zIndex': '' + (++rocket.Draggable.z_index_)
+      });
+    }
+
     doc
       .addEventListener('mousemove', mouse_move_handler)
       .addEventListener(
@@ -258,8 +298,6 @@ rocket.Draggable.prototype.decorate = function(element) {
       .preventSelect()
       .style({
         'position': 'absolute',
-        'left': rect.left,
-        'top': rect.top,
         'width': rect.width,
         'height': rect.height
       })

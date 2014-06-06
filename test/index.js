@@ -66,6 +66,31 @@ rocket.ready(function(){
   $('body').appendChild(d);
   
   (window.d = new rocket.Draggable()).decorate(d);
+  window.d.zIndex(true);
+    
+  var d = $.createElement('div').innerHTML('draggable').style({
+    'padding': 50,
+    'width': 600,
+    'background-color': '#DDDDDD',
+    'border': '1px solid red'
+  });
+  
+  $('body').appendChild(d);
+  
+  (window.d = new rocket.Draggable()).decorate(d);
+  window.d.zIndex(true);
+    
+  var d = $.createElement('div').innerHTML('draggable').style({
+    'padding': 50,
+    'width': 600,
+    'background-color': '#DDDDDD',
+    'border': '1px solid red'
+  });
+  
+  $('body').appendChild(d);
+  
+  (window.d = new rocket.Draggable()).decorate(d);
+  window.d.zIndex(true);
   
   var foo = [];
   for(var i = 0; i < 1000; ++i){
