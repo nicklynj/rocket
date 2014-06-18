@@ -6,10 +6,18 @@ mkdir -p build
 mkdir -p doc
 
 echo documenting...
-php -f doc.php
+if hash php5.5 2>/dev/null; then
+  php5.5 -f doc.php
+else
+  php -f doc.php
+fi
 
 echo generating...
-php -f manifest.php
+if hash php5.5 2>/dev/null; then
+  php5.5 -f manifest.php
+else
+  php -f manifest.php
+fi
 
 echo developing...
 rm -f build/rocket.development.js
