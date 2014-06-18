@@ -33,5 +33,5 @@ cat build/manifest_lines | xargs cat >> build/rocket.development.js
 # [todo:]
 
 echo cleaning...
-rm build/manifest*
-rm build/temp*
+rm -f build/manifest*
+rm -f build/temp*
