@@ -92,7 +92,7 @@ rocket.Input.prototype.decorate = function(input) {
   });
 
   new rocket.Elements([document]).addEventListener(
-      'mousedown.Input',
+      ['mousedown.Input', 'touchstart.Input'],
       this.input_document_listener_
   );
 
@@ -113,7 +113,7 @@ rocket.Input.prototype.decorate = function(input) {
           }
       )
       .addEventListener(
-          'mousedown.Input',
+          ['mousedown.Input', 'touchstart.Input'],
           /** @param {Event} e */
           function(e) {
 
@@ -145,34 +145,50 @@ rocket.Input.prototype.decorate = function(input) {
               if (e.type === 'keydown') {
 
                 if (e.which === rocket.KEY.down) {
+
                   self.down();
+                  return;
+
                 } else if (e.which === rocket.KEY.up) {
+
                   self.up();
+                  return;
+
                 } else if (e.which === rocket.KEY.pageDown) {
+
                   for (var i = 0; i < 5; ++i) {
                     self.down();
                   }
+                  return;
+
                 } else if (e.which === rocket.KEY.pageUp) {
+
                   for (var i = 0; i < 5; ++i) {
                     self.up();
                   }
+                  return;
+
                 } else if (e.which === rocket.KEY.escape) {
+
                   self.cancel();
                   self.hide();
+                  return;
+
                 } else if (
                     (e.which === rocket.KEY.enter) ||
                     (e.which === rocket.KEY.tab)
                 ) {
+
                   self.enter();
                   self.input_shown_ = false;
                   self.hide();
-                } else {
-
-                  self.change();
+                  return;
 
                 }
 
               }
+
+              self.change();
 
             }
 
@@ -236,7 +252,7 @@ rocket.Input.prototype.dispose = function() {
 
     this.input_element_.removeEventListener('.Input');
     new rocket.Elements([document]).removeEventListener(
-        'mousedown.Input',
+        ['mousedown.Input', 'touchstart.Input'],
         this.input_document_listener_
     );
 

@@ -242,15 +242,17 @@ rocket.Draggable.prototype.decorate = function(element) {
     }
 
     doc
-      .addEventListener('mousemove', mouse_move_handler)
+      .addEventListener(['mousemove', 'touchmove'], mouse_move_handler)
       .addEventListener(
-            'mouseup',
+            ['mouseup', 'touchend'],
             self.mouse_up_handler_
         );
 
   });
 
   var mouse_move_handler = /** @param {Event} e */ (function(e) {
+
+    e.preventDefault();
 
     if (!self.fixX_) {
 
@@ -284,9 +286,9 @@ rocket.Draggable.prototype.decorate = function(element) {
 
   this.mouse_up_handler_ = function() {
     doc
-      .removeEventListener('mousemove', mouse_move_handler)
+      .removeEventListener(['mousemove', 'touchmove'], mouse_move_handler)
       .removeEventListener(
-            'mouseup',
+            ['mouseup', 'touchend'],
             self.mouse_up_handler_
         );
   };
@@ -301,7 +303,7 @@ rocket.Draggable.prototype.decorate = function(element) {
         'width': rect.width,
         'height': rect.height
       })
-      .addEventListener('mousedown', mouse_down_handler);
+      .addEventListener(['mousedown', 'touchstart'], mouse_down_handler);
 
   this.setComponentElement(this.container_);
 

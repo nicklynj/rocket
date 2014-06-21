@@ -95,7 +95,7 @@ rocket.AutoSuggest.prototype.show = function() {
         'left': rect.left
       })
     .preventSelect()
-    .addEventListener('mousedown', function(e) {
+    .addEventListener(['mousedown', 'touchstart'], function(e) {
         e.stopPropagation();
       })
     .live('tr', 'mouseover', /** @this {HTMLTableRowElement} */ (

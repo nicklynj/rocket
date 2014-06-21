@@ -79,7 +79,7 @@ rocket.DateInput.prototype.show = function() {
         'top': rect.bottom - 1
       })
     .preventSelect()
-    .addEventListener('mousedown', function(e) {
+    .addEventListener(['mousedown', 'touchstart'], function(e) {
         e.stopPropagation();
       })
     .live('td', 'mouseover',

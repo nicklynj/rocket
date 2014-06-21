@@ -761,23 +761,7 @@ rocket.Elements.prototype.fit = function(opt_container) {
 
   } else {
 
-    var body = document.body;
-    var documentElement = document.documentElement;
-
-    container = {
-      'left': 0,
-      'top': 0,
-      'right':
-          window.innerWidth ||
-          documentElement && documentElement.clientWidth ||
-          body && body.clientWidth ||
-          0,
-      'bottom':
-          window.innerHeight ||
-          documentElement && documentElement.clientHeight ||
-          body && body.clientHeight ||
-          0
-    };
+    container = rocket.$('html').getBoundingClientRect();
 
   }
 
@@ -791,30 +775,38 @@ rocket.Elements.prototype.fit = function(opt_container) {
     var rect = element.getBoundingClientRect();
 
     if (rect.right > container.right) {
+
       element.style(
           'left',
-          element.style('left') - rect.right + container.right - 20
+          element.style('left') - rect.right + container.right
       );
-    }
 
-    if (rect.bottom > container.bottom) {
-      element.style(
-          'top',
-          element.style('top') - rect.bottom + container.bottom - 20
-      );
+      rect = element.getBoundingClientRect();
+
     }
 
     if (rect.left < container.left) {
       element.style(
-          'right',
-          element.style('right') - container.left + rect.left + 20
+          'left',
+          element.style('left') + container.left - rect.left
       );
+    }
+
+    if (rect.bottom > container.bottom) {
+
+      element.style(
+          'top',
+          element.style('top') - rect.bottom + container.bottom
+      );
+
+      rect = element.getBoundingClientRect();
+
     }
 
     if (rect.top < container.top) {
       element.style(
-          'bottom',
-          element.style('bottom') - container.bottom + rect.bottom + 20
+          'top',
+          element.style('top') + container.top - rect.top
       );
     }
 

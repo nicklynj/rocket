@@ -110,4 +110,9 @@ rocket.ready(function(){
   $('body').appendChild($.createElement('div').innerHTML(Math.random()));
   $('body').appendChild($.createElement('div').innerHTML(Math.random()));
   
+  var bar = $('body').appendChild($.createElement('div').innerHTML('bar'));
+  $('body').appendChild($.createElement('input').addEventListener('afterkeydown', function() {
+    bar.innerHTML(this.value || 'bar');
+  }));
+  
 });
