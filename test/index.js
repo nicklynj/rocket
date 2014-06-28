@@ -66,7 +66,7 @@ rocket.ready(function(){
   $('body').appendChild(d);
   
   (window.d = new rocket.Draggable()).decorate(d);
-  window.d.zIndex(true);
+  window.d.appendChild(true);
     
   var d = $.createElement('div').innerHTML('draggable').style({
     'padding': 50,
@@ -78,7 +78,7 @@ rocket.ready(function(){
   $('body').appendChild(d);
   
   (window.d = new rocket.Draggable()).decorate(d);
-  window.d.zIndex(true);
+  window.d.appendChild(true);
     
   var d = $.createElement('div').innerHTML('draggable').style({
     'padding': 50,
@@ -90,7 +90,7 @@ rocket.ready(function(){
   $('body').appendChild(d);
   
   (window.d = new rocket.Draggable()).decorate(d);
-  window.d.zIndex(true);
+  window.d.appendChild(true);
   
   var foo = [];
   for(var i = 0; i < 1000; ++i){

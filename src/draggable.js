@@ -86,6 +86,13 @@ rocket.Draggable.prototype.z_index_ = false;
 
 
 /**
+@private
+@type {boolean}
+*/
+rocket.Draggable.prototype.append_child_ = false;
+
+
+/**
 Prevent the Element from being moved on the horizontal x axis.
 
 @param {boolean=} opt_fix
@@ -155,6 +162,23 @@ rocket.Draggable.prototype.zIndex = function(opt_z_index) {
   }
 
   return this.z_index_;
+
+};
+
+
+/**
+Whenever a Draggable is dragged, append it to the end of its parent container.
+
+@param {boolean=} opt_append_child
+@return {boolean} Whether to append the Draggable to the end of its parent.
+*/
+rocket.Draggable.prototype.appendChild = function(opt_append_child) {
+
+  if (arguments.length) {
+    this.append_child_ = /** @type {boolean} */ (opt_append_child);
+  }
+
+  return this.append_child_;
 
 };
 
@@ -239,6 +263,10 @@ rocket.Draggable.prototype.decorate = function(element) {
       self.container_.style({
         'zIndex': '' + (++rocket.Draggable.z_index_)
       });
+    }
+
+    if (self.append_child_) {
+      self.container_.parentNode().appendChild(self.container_);
     }
 
     doc
