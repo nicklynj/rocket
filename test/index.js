@@ -115,4 +115,29 @@ rocket.ready(function(){
     bar.innerHTML(this.value || 'bar');
   }));
   
+  var to;
+  
+  var len = 10000;
+  
+  var infini = new rocket.InfiniScroll(len);
+  infini.query(function(index, length){
+    var rows = [];
+    for (var i = 0; i < length; ++i) {
+      rows.push([i + index, i, index, length, $.random()]);
+    }
+    infini.results(rows);
+  });
+  infini.render();
+  
+  // var container = $.createElement('div').style({'height': 300, 'overflow-y': 'scroll'});
+  // var table = rocket.table(5, len);
+  // for(var i = 0; i < len; ++i) {
+    // table.trs[i].tds[0].innerHTML(i);
+    // table.trs[i].tds[1].innerHTML(i);
+    // table.trs[i].tds[2].innerHTML(i + i);
+    // table.trs[i].tds[3].innerHTML(len);
+    // table.trs[i].tds[4].innerHTML($.random());
+  // }
+  // $('body').appendChild(container).appendChild(table);
+  
 });
