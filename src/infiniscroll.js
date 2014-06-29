@@ -6,7 +6,7 @@
 @extends {rocket.Component}
 */
 rocket.InfiniScroll = function() {};
-rocket.inherits(rocket.Draggable, rocket.Component);
+rocket.inherits(rocket.InfiniScroll, rocket.Component);
 
 
 /**

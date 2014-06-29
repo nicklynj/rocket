@@ -266,7 +266,10 @@ rocket.Draggable.prototype.decorate = function(element) {
     }
 
     if (self.append_child_) {
+
       self.container_.parentNode().appendChild(self.container_);
+      mouse_move_handler(e);
+
     }
 
     doc
@@ -280,7 +283,9 @@ rocket.Draggable.prototype.decorate = function(element) {
 
   var mouse_move_handler = /** @param {Event} e */ (function(e) {
 
-    e.preventDefault();
+    if (e.type === 'touchmove') {
+      e.preventDefault();
+    }
 
     if (!self.fixX_) {
 
