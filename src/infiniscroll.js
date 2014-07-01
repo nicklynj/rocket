@@ -31,6 +31,13 @@ rocket.InfiniScroll.prototype.row_height_ = 20;
 
 
 /**
+@type {number}
+@private
+*/
+rocket.InfiniScroll.prototype.scroll_top_;
+
+
+/**
 Set or get the height of each row in pixels.
 
 @param {number=} opt_row_height
@@ -188,7 +195,7 @@ rocket.InfiniScroll.prototype.decorate = function(element) {
     'height': this.row_height_ * this.length_
   });
 
-  this.query_length_ = Math.floor(this.height_ / this.row_height_) + 1;
+  this.query_length_ = Math.ceil(this.height_ / this.row_height_) * 2;
 
   this.padding_.style({
     'height': 0
@@ -202,15 +209,41 @@ rocket.InfiniScroll.prototype.decorate = function(element) {
 
   this.element_scroller_ = function() {
 
-    var scroll_top = element.getAttribute('scrollTop');
+    var scroll_top = /** @type {number} */ (element.getAttribute('scrollTop'));
 
     var index = Math.floor(scroll_top / self.row_height_);
+
+    if (scroll_top < self.scroll_top_) {
+
+      index -= Math.ceil(self.query_length_ / 3);
+
+    } else {
+
+      index -= Math.ceil(self.query_length_ / 6);
+
+    }
+
+    self.scroll_top_ = scroll_top;
+
+    if (index < 0) {
+      index = 0;
+    }
+
+    var diff = (index + self.query_length_) - self.length_;
+
+    if (diff > 0) {
+      index -= diff;
+    }
+
+    if (index < 0) {
+      index = 0;
+    }
 
     if (index !== self.index_) {
 
       self.index_ = index;
 
-      var diff = (index + self.query_length_) - self.length_;
+      diff = (index + self.query_length_) - self.length_;
 
       self.query_(
           index,

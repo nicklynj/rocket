@@ -119,13 +119,18 @@ rocket.ready(function(){
   
   var len = 10000;
   
+  var timeout;
   var infini = new rocket.InfiniScroll(len);
+  infini.height(600);
   infini.query(function(index, length){
     var rows = [];
     for (var i = 0; i < length; ++i) {
       rows.push([i + index, i, index, length, $.random()]);
     }
-    infini.results(rows);
+    // clearTimeout(timeout)
+    // timeout = setTimeout(function(){console.log('query index:"'+index+'" length:"'+length+'" RESULTS');
+      infini.results(rows);
+    // },3000);
   });
   infini.render();
   
