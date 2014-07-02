@@ -242,28 +242,32 @@ Abort this request.
 */
 rocket.XMLHttpRequest.prototype.abort = function() {
 
-  if (this.request_ && typeof this.request_.abort === 'function') {
+  if (this.readyState > 1) {
 
-    this.request_.abort();
+    if (this.request_ && typeof this.request_.abort === 'function') {
+
+      this.request_.abort();
+
+    }
+
+    if (this.onabort) {
+
+      this.onabort();
+
+    }
+
+    this.dispatchEvent('abort');
+
+    this.removeEventListener();
+    delete this.onreadystatechange;
+    delete this.onabort;
+
+    this.headers_ = {};
+    this.readyState = 0;
+    this.status = 0;
+    this.responseText = '';
 
   }
-
-  if (this.onabort) {
-
-    this.onabort();
-
-  }
-
-  this.dispatchEvent('abort');
-
-  this.removeEventListener();
-  delete this.onreadystatechange;
-  delete this.onabort;
-
-  this.headers_ = {};
-  this.readyState = 0;
-  this.status = 0;
-  this.responseText = '';
 
 };
 
