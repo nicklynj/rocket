@@ -31,6 +31,13 @@ rocket.InfiniScroll.prototype.row_height_ = 20;
 
 
 /**
+@type {boolean}
+@private
+*/
+rocket.InfiniScroll.prototype.pad_results_ = false;
+
+
+/**
 @type {number}
 @private
 */
@@ -38,20 +45,23 @@ rocket.InfiniScroll.prototype.scroll_top_;
 
 
 /**
-Set or get the height of each row in pixels.
+Requests twice the viewable area of results
+to prevent seeing empty rows when scrolling.
 
-@param {number=} opt_row_height
-@return {number}
+Defaults to false.
+
+@param {boolean=} opt_pad_results
+@return {boolean}
 */
-rocket.InfiniScroll.prototype.rowHeight = function(opt_row_height) {
+rocket.InfiniScroll.prototype.padResults = function(opt_pad_results) {
 
   if (arguments.length) {
 
-    this.row_height_ = /** @type {number} */ (opt_row_height);
+    this.pad_results_ = /** @type {boolean} */ (opt_pad_results);
 
   }
 
-  return this.row_height_;
+  return this.pad_results_;
 
 };
 
@@ -195,7 +205,11 @@ rocket.InfiniScroll.prototype.decorate = function(element) {
     'height': this.row_height_ * this.length_
   });
 
-  this.query_length_ = Math.ceil(this.height_ / this.row_height_) * 2;
+  this.query_length_ = Math.ceil(this.height_ / this.row_height_);
+
+  if (this.pad_results_) {
+    this.query_length_ *= 2;
+  }
 
   this.padding_.style({
     'height': 0
@@ -213,21 +227,25 @@ rocket.InfiniScroll.prototype.decorate = function(element) {
 
     var index = Math.floor(scroll_top / self.row_height_);
 
-    if (scroll_top < self.scroll_top_) {
+    if (self.pad_results_) {
 
-      index -= Math.ceil(self.query_length_ / 3);
+      if (scroll_top < self.scroll_top_) {
 
-    } else {
+        index -= Math.ceil(self.query_length_ / 3);
 
-      index -= Math.ceil(self.query_length_ / 6);
+      } else {
+
+        index -= Math.ceil(self.query_length_ / 6);
+
+      }
+
+      if (index < 0) {
+        index = 0;
+      }
 
     }
 
     self.scroll_top_ = scroll_top;
-
-    if (index < 0) {
-      index = 0;
-    }
 
     var diff = (index + self.query_length_) - self.length_;
 

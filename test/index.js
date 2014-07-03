@@ -132,6 +132,7 @@ rocket.ready(function(){
       infini.results(rows);
     // },3000);
   });
+  // infini.padResults(true);
   infini.render();
   
   // var container = $.createElement('div').style({'height': 300, 'overflow-y': 'scroll'});
