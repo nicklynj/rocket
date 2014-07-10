@@ -82,7 +82,13 @@ class manifest {
         $dep['requires'][$req] = true;
       }
     }
-
+    
+    preg_match_all('/^('.$this->var.'(\.'.$this->var.')*)\s*=\s*\'[^\']+\'\s*\+\s*('.$this->var.'(\.'.$this->var.')*);/sm', $contents, $matches);
+    
+    foreach ($matches[3] as $match) {
+      $dep['requires'][$match] = true;
+    }
+    
     return $dep;
     
   }
