@@ -21,28 +21,13 @@ rocket.inherits(rocket.Component, rocket.EventTarget);
 @private
 @type {boolean}
 */
-rocket.Component.prototype.component_rendered_ = false;
-
-
-/**
-@return {boolean}
-*/
-rocket.Component.prototype.rendered = function() {
-  return this.component_rendered_;
-};
-
-
-/**
-@private
-@type {boolean}
-*/
 rocket.Component.prototype.component_disposed_ = false;
 
 
 /**
 @return {boolean}
 */
-rocket.Component.prototype.disposed = function() {
+rocket.Component.prototype.getComponentDisposed = function() {
   return this.component_disposed_;
 };
 
@@ -52,6 +37,22 @@ rocket.Component.prototype.disposed = function() {
 @type {rocket.Elements}
 */
 rocket.Component.prototype.component_element_;
+
+
+/**
+@param {rocket.Elements} element
+*/
+rocket.Component.prototype.setComponentElement = function(element) {
+  this.component_element_ = element;
+};
+
+
+/**
+@return {rocket.Elements}
+*/
+rocket.Component.prototype.getComponentElement = function() {
+  return this.component_element_;
+};
 
 
 /**
@@ -73,8 +74,6 @@ rocket.Component.prototype.decorate = function(element) {};
 */
 rocket.Component.prototype.render = function(opt_parent) {
 
-  this.component_rendered_ = true;
-
   this.component_element_ = this.create();
 
   this.decorate(this.component_element_);
@@ -93,35 +92,17 @@ rocket.Component.prototype.render = function(opt_parent) {
 
 
 /**
-@param {rocket.Elements} element
-*/
-rocket.Component.prototype.setComponentElement = function(element) {
-  this.component_element_ = element;
-};
-
-
-/**
 dispose
 */
 rocket.Component.prototype.dispose = function() {
-
-  this.disposeInternal();
-
-};
-
-
-/**
-disposeInternal
-*/
-rocket.Component.prototype.disposeInternal = function() {
 
   if (!this.component_disposed_) {
 
     this.component_disposed_ = true;
 
-    if (this.component_rendered_) {
-      this.component_element_.parentNode().removeChild(this.component_element_);
-    }
+    this.component_element_.parentNode().removeChild(this.component_element_);
+
+    this.component_element_.removeEventListener();
 
     delete this.component_element_;
 

@@ -75,7 +75,7 @@ rocket.AutoSuggest.prototype.show = function() {
   this.container_ = rocket.createElement('div');
   this.scroller_ = rocket.createElement('div');
 
-  var rect = this.getInput().getBoundingClientRect();
+  var rect = this.getInputElement().getBoundingClientRect();
 
   var self = this;
 
@@ -132,8 +132,8 @@ rocket.AutoSuggest.prototype.show = function() {
 */
 rocket.AutoSuggest.prototype.change = function() {
 
-  if (this.query_ !== this.getInput().value()) {
-    this.query_ = /** @type {string} */ (this.getInput().value());
+  if (this.query_ !== this.getInputElement().value()) {
+    this.query_ = /** @type {string} */ (this.getInputElement().value());
     this.query(this.query_);
   }
 
@@ -185,7 +185,7 @@ rocket.AutoSuggest.prototype.setResults = function(results) {
 
   this.results_ = results;
 
-  if (!this.hidden()) {
+  if (this.getInputDisplayed()) {
     this.change();
   }
 
@@ -333,10 +333,10 @@ rocket.AutoSuggest.prototype.enter = function(opt_result) {
 
     this.result_ = result;
 
-    this.getInput().value(result[0].replace(/<[^>]+>/g, ''));
+    this.getInputElement().value(result[0].replace(/<[^>]+>/g, ''));
 
-    if (new rocket.Elements([document.body]).contains(this.getInput())) {
-      this.getInput()
+    if (new rocket.Elements([document.body]).contains(this.getInputElement())) {
+      this.getInputElement()
           .setSelectionRange(0, result[0].length)
           .focus();
     }

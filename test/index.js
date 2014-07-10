@@ -172,7 +172,7 @@ rocket.ManualSelect = function() {
     if (result) {
     
       setTimeout(function(){
-        input.value(result[0]).setSelectionRange(0, result[0].length);
+        input.value(result[0].replace(/<[^>]+>/g, '')).setSelectionRange(0, result[0].length);
       });
 
     }
