@@ -17,14 +17,6 @@ rocket.inherits(rocket.Input, rocket.Component);
 
 
 /**
-@return {rocket.Elements}
-*/
-rocket.Input.prototype.create = function() {
-  return rocket.createElement('input');
-};
-
-
-/**
 @type {boolean}
 @private
 */
@@ -62,42 +54,64 @@ rocket.Input.prototype.input_value_;
 
 
 /**
-@param {rocket.Elements} input
+@return {rocket.Elements}
 */
-rocket.Input.prototype.decorate = function(input) {
+rocket.Input.prototype.createElementInternal = function() {
+  return rocket.createElement('input');
+};
 
-  var self = this;
 
-  this.input_document_listener_ = /** @param {Event} e */ (function(e) {
-    if (self.input_displayed_) {
-      self.input_displayed_ = false;
+/**
+@private
+*/
+rocket.Input.prototype.input_add_document_listener_ = function() {
+
+  if (!this.input_document_listener_) {
+
+    var self = this;
+
+    this.input_document_listener_ = /** @param {Event} e */ (function(e) {
       self.hide();
-    }
-  });
+    });
+
+  }
 
   new rocket.Elements([document]).addEventListener(
       ['mousedown.Input', 'touchstart.Input'],
       this.input_document_listener_
   );
 
-  this.input_value_ = input.value();
+};
+
+
+/**
+@private
+*/
+rocket.Input.prototype.input_remove_document_listener_ = function() {
+
+  new rocket.Elements([document]).removeEventListener(
+      ['mousedown.Input', 'touchstart.Input'],
+      this.input_document_listener_
+  );
+
+};
+
+
+/**
+@param {rocket.Elements} input
+*/
+rocket.Input.prototype.decorateInternal = function(input) {
+
+  var self = this;
 
   input
       .addEventListener(
           'keyup.Input',
           /** @param {Event} e */
           function(e) {
-
             if (e.which === rocket.KEY.tab) {
-              if (!self.input_displayed_) {
-
-                self.input_displayed_ = true;
-                self.input_value_ = input.value();
-                self.show();
-
-              }
+              self.show();
             }
-
           }
       )
       .addEventListener(
@@ -106,17 +120,12 @@ rocket.Input.prototype.decorate = function(input) {
           function(e) {
 
             e.stopPropagation();
-            if (!self.input_displayed_) {
 
-              (new rocket.Elements([document]))
-                  .dispatchEvent('mousedown')
-                  .dispatchEvent('touchstart');
+            (new rocket.Elements([document]))
+                .dispatchEvent('mousedown')
+                .dispatchEvent('touchstart');
 
-              self.input_displayed_ = true;
-              self.input_value_ = input.value();
-              self.show();
-
-            }
+            self.show();
 
           }
       )
@@ -125,18 +134,9 @@ rocket.Input.prototype.decorate = function(input) {
           /** @param {Event} e */
           function(e) {
 
-            var input_value = input.value();
+            if (e.which !== rocket.KEY.enter) {
 
-            if (self.input_value_ !== input_value) {
-
-              self.input_value_ = input_value;
-
-              if (!self.input_displayed_) {
-                self.input_displayed_ = true;
-                self.show();
-              }
-
-              self.change();
+              self.show();
 
             }
 
@@ -144,18 +144,22 @@ rocket.Input.prototype.decorate = function(input) {
 
               if (e.which === rocket.KEY.down) {
 
+                self.show();
                 self.down();
 
               } else if (e.which === rocket.KEY.up) {
 
+                self.show();
                 self.up();
 
               } else if (e.which === rocket.KEY.pageDown) {
 
+                self.show();
                 self.pageDown();
 
               } else if (e.which === rocket.KEY.pageUp) {
 
+                self.show();
                 self.pageUp();
 
               } else if (e.which === rocket.KEY.escape) {
@@ -165,12 +169,10 @@ rocket.Input.prototype.decorate = function(input) {
               } else if (e.which === rocket.KEY.enter) {
 
                 self.enter();
-                self.input_displayed_ = false;
                 self.hide();
 
               } else if (e.which === rocket.KEY.tab) {
 
-                self.input_displayed_ = false;
                 self.hide();
 
               }
@@ -186,60 +188,145 @@ rocket.Input.prototype.decorate = function(input) {
 /**
 dispose
 */
-rocket.Input.prototype.dispose = function() {
+rocket.Input.prototype.disposeInternal = function() {
 
   if (this.input_displayed_) {
     this.hide();
   }
 
-  new rocket.Elements([document]).removeEventListener(
-      ['mousedown.Input', 'touchstart.Input'],
-      this.input_document_listener_
-  );
+  this.getInputElement().removeEventListener('.Input');
+  this.input_remove_document_listener_();
 
 };
 
 
 /**
-Override this.
+@final
 */
-rocket.Input.prototype.show = function() {};
+rocket.Input.prototype.show = function() {
+
+  if (!this.input_displayed_) {
+
+    this.input_displayed_ = true;
+    this.input_add_document_listener_();
+    this.showInternal();
+
+    this.dispatchEvent('show');
+
+  }
+
+  var input_value = this.getInputElement().value();
+
+  if (this.input_value_ !== input_value) {
+
+    this.input_value_ = input_value;
+    this.change();
+
+  }
+
+};
 
 
 /**
-Override this.
+@final
 */
-rocket.Input.prototype.hide = function() {};
+rocket.Input.prototype.hide = function() {
+
+  if (this.input_displayed_) {
+
+    this.input_displayed_ = false;
+    this.input_remove_document_listener_();
+    this.hideInternal();
+
+    this.dispatchEvent('hide');
+
+  }
+
+};
 
 
 /**
-Override this.
+@final
 */
-rocket.Input.prototype.cancel = function() {};
+rocket.Input.prototype.enter = function() {
+  this.enterInternal();
+};
 
 
 /**
-Override this.
+@final
 */
-rocket.Input.prototype.enter = function() {};
+rocket.Input.prototype.up = function() {
+  this.upInternal();
+};
 
 
 /**
-Override this.
+@final
 */
-rocket.Input.prototype.up = function() {};
+rocket.Input.prototype.down = function() {
+  this.downInternal();
+};
 
 
 /**
-Override this.
-*/
-rocket.Input.prototype.down = function() {};
-
-
-/**
-Maybe override this.
+@final
 */
 rocket.Input.prototype.pageUp = function() {
+  this.pageUpInternal();
+};
+
+
+/**
+@final
+*/
+rocket.Input.prototype.pageDown = function() {
+  this.pageDownInternal();
+};
+
+
+/**
+@final
+*/
+rocket.Input.prototype.change = function() {
+  this.changeInternal();
+};
+
+
+/**
+Override me.
+*/
+rocket.Input.prototype.showInternal = function() {};
+
+
+/**
+Override me.
+*/
+rocket.Input.prototype.hideInternal = function() {};
+
+
+/**
+Override me.
+*/
+rocket.Input.prototype.enterInternal = function() {};
+
+
+/**
+Override me.
+*/
+rocket.Input.prototype.upInternal = function() {};
+
+
+/**
+Override me.
+*/
+rocket.Input.prototype.downInternal = function() {};
+
+
+/**
+Override me.
+*/
+rocket.Input.prototype.pageUpInternal = function() {
   for (var i = 0; i < 5; ++i) {
     this.up();
   }
@@ -247,16 +334,10 @@ rocket.Input.prototype.pageUp = function() {
 
 
 /**
-Maybe override this.
+Override me.
 */
-rocket.Input.prototype.pageDown = function() {
+rocket.Input.prototype.pageDownInternal = function() {
   for (var i = 0; i < 5; ++i) {
     this.down();
   }
 };
-
-
-/**
-Override this.
-*/
-rocket.Input.prototype.change = function() {};

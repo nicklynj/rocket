@@ -5,9 +5,10 @@
 A helper class for creating classes that interact with the DOM.
 
 The intention is that children classes will inherit this class and override
-the decorate/create prototype methods.
+the createElementInternal, decorateInternal, and disposeInternal methods.
 
-If necessary, a child class can override this prototype dispose method.
+These methods are final and cannot be overriden:
+createElement, decorate, dispose, and render.
 
 @constructor
 @implements {rocket.Disposable}
@@ -22,6 +23,27 @@ rocket.inherits(rocket.Component, rocket.EventTarget);
 @type {boolean}
 */
 rocket.Component.prototype.component_disposed_ = false;
+
+
+/**
+@private
+@type {boolean}
+*/
+rocket.Component.prototype.component_decorated_ = false;
+
+
+/**
+@private
+@type {boolean}
+*/
+rocket.Component.prototype.component_rendered_ = false;
+
+
+/**
+@private
+@type {boolean}
+*/
+rocket.Component.prototype.component_element_created_ = false;
 
 
 /**
@@ -56,35 +78,60 @@ rocket.Component.prototype.getComponentElement = function() {
 
 
 /**
+@final
 @return {rocket.Elements}
 */
-rocket.Component.prototype.create = function() {
-  return rocket.createElement('div');
+rocket.Component.prototype.createElement = function() {
+
+  if (!this.component_element_created_) {
+
+    this.component_element_created_ = true;
+
+    this.component_element_ = this.createElementInternal();
+
+  }
+
+  return this.component_element_;
+
 };
 
 
 /**
+@final
 @param {rocket.Elements} element
 */
-rocket.Component.prototype.decorate = function(element) {};
+rocket.Component.prototype.decorate = function(element) {
+
+  if (!this.component_decorated_) {
+
+    this.component_decorated_ = true;
+
+    this.decorateInternal(element);
+
+  }
+
+};
 
 
 /**
+@final
 @param {rocket.Elements=} opt_parent
 */
 rocket.Component.prototype.render = function(opt_parent) {
 
-  this.component_element_ = this.create();
+  this.component_rendered_ = true;
 
-  this.decorate(this.component_element_);
+  var element = this.createElement();
+
+  this.decorate(element);
 
   if (arguments.length) {
 
-    opt_parent.appendChild(this.component_element_);
+    opt_parent.appendChild(element);
 
   } else {
 
-    new rocket.Elements([document.body]).appendChild(this.component_element_);
+    new rocket.Elements([document.body]).appendChild(element);
 
   }
 
@@ -93,16 +140,19 @@ rocket.Component.prototype.render = function(opt_parent) {
 
 /**
 dispose
+@final
 */
 rocket.Component.prototype.dispose = function() {
 
-  if (!this.component_disposed_) {
+  if (this.component_element_created_ && !this.component_disposed_) {
+
+    this.disposeInternal();
 
     this.component_disposed_ = true;
 
-    this.component_element_.parentNode().removeChild(this.component_element_);
-
-    this.component_element_.removeEventListener();
+    if (this.component_rendered_) {
+      this.component_element_.parentNode().removeChild(this.component_element_);
+    }
 
     delete this.component_element_;
 
@@ -111,3 +161,27 @@ rocket.Component.prototype.dispose = function() {
   }
 
 };
+
+
+/**
+Override me.
+@return {rocket.Elements}
+*/
+rocket.Component.prototype.createElementInternal = function() {
+
+  return rocket.createElement('div');
+
+};
+
+
+/**
+Override me.
+@param {rocket.Elements} element
+*/
+rocket.Component.prototype.decorateInternal = function(element) {};
+
+
+/**
+Override me.
+*/
+rocket.Component.prototype.disposeInternal = function() {};

@@ -9,15 +9,17 @@ AutoSelect
 */
 rocket.AutoSelect = function() {
 
-  this.addEventListener('render', /** @this {rocket.AutoSelect} */ (function() {
+  this.addEventListener('show', /** @this {rocket.AutoSelect} */ (function() {
 
     if (this.getResult()) {
 
       this.place_holder_ = rocket.createElement('div');
 
-      this.getInput().value('');
+      this.getInputElement().value('');
 
-      var rect = this.getInput().getBoundingClientRect();
+      this.change();
+
+      var rect = this.getInputElement().getBoundingClientRect();
 
       this.place_holder_
         .style({
@@ -47,7 +49,7 @@ rocket.AutoSelect = function() {
 
     if (this.place_holder_) {
 
-      this.getInput().value(this.getResult()[0]);
+      this.getInputElement().value(this.getResult()[0]);
 
       new rocket.Elements([document.body]).removeChild(this.place_holder_);
 

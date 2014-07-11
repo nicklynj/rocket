@@ -48,13 +48,6 @@ rocket.AutoSuggest.prototype.highlighted_;
 
 /**
 @private
-@type {string}
-*/
-rocket.AutoSuggest.prototype.query_;
-
-
-/**
-@private
 @type {Array.<Object.<number, string>>}
 */
 rocket.AutoSuggest.prototype.results_;
@@ -68,9 +61,16 @@ rocket.AutoSuggest.prototype.result_;
 
 
 /**
+@private
+@type {function(string)}
+*/
+rocket.AutoSuggest.prototype.query_;
+
+
+/**
 Override.
 */
-rocket.AutoSuggest.prototype.show = function() {
+rocket.AutoSuggest.prototype.showInternal = function() {
 
   this.container_ = rocket.createElement('div');
   this.scroller_ = rocket.createElement('div');
@@ -108,7 +108,6 @@ rocket.AutoSuggest.prototype.show = function() {
             if (this.parentNode === self.tbody_[0]) {
               self.enter();
               self.hide();
-              self.hidden(true);
             }
           }
       ));
@@ -120,22 +119,29 @@ rocket.AutoSuggest.prototype.show = function() {
         'overflow-x': 'hidden'
       });
 
+  this.draw_results_();
+
   this.container_.appendChild(this.scroller_);
   new rocket.Elements([document.body]).appendChild(this.container_);
-
-  this.dispatchEvent('render');
 
 };
 
 
 /**
 */
-rocket.AutoSuggest.prototype.change = function() {
+rocket.AutoSuggest.prototype.changeInternal = function() {
 
-  if (this.query_ !== this.getInputElement().value()) {
-    this.query_ = /** @type {string} */ (this.getInputElement().value());
-    this.query(this.query_);
-  }
+  this.query_(/** @type {string} */ (this.getInputElement().value()));
+
+  this.draw_results_();
+
+};
+
+
+/**
+@private
+*/
+rocket.AutoSuggest.prototype.draw_results_ = function() {
 
   this.highlighted_ = new rocket.Elements([]);
 
@@ -185,17 +191,19 @@ rocket.AutoSuggest.prototype.setResults = function(results) {
 
   this.results_ = results;
 
-  if (this.getInputDisplayed()) {
-    this.change();
-  }
+  this.draw_results_();
 
 };
 
 
 /**
-@param {string} str
+@param {function(string)} fnct
 */
-rocket.AutoSuggest.prototype.query = function(str) {};
+rocket.AutoSuggest.prototype.query = function(fnct) {
+
+  this.query_ = fnct;
+
+};
 
 
 /**
@@ -214,7 +222,9 @@ rocket.AutoSuggest.prototype.data = function(data) {
     return 0;
   });
 
-  this.query = /** @param {string} query */ (function(query) {
+  var self = this;
+
+  this.query(/** @param {string} query */ (function(query) {
 
     var results = [];
 
@@ -234,9 +244,9 @@ rocket.AutoSuggest.prototype.data = function(data) {
       }
     }
 
-    this.setResults(results);
+    self.setResults(results);
 
-  });
+  }));
 
 };
 
@@ -293,7 +303,17 @@ rocket.AutoSuggest.prototype.highlight_ = function(element, scroll) {
 @param {Object.<number, string>} result
 */
 rocket.AutoSuggest.prototype.setResult = function(result) {
-  this.enter(result);
+
+  this.result_ = result;
+
+  this.getInputElement().value(result[0].replace(/<[^>]+>/g, ''));
+
+  if (new rocket.Elements([document.body]).contains(this.getInputElement())) {
+    this.getInputElement()
+        .setSelectionRange(0, result[0].length)
+        .focus();
+  }
+
 };
 
 
@@ -309,39 +329,19 @@ rocket.AutoSuggest.prototype.getResult = function() {
 Override.
 @param {Object.<number, string>=} opt_result
 */
-rocket.AutoSuggest.prototype.enter = function(opt_result) {
+rocket.AutoSuggest.prototype.enterInternal = function(opt_result) {
 
   var result;
 
-  if (opt_result) {
-
-    result = opt_result;
-
-  } else {
-
-    if (this.highlighted_) {
-      result = this.results_[this.highlighted_.getAttribute('rowIndex')];
-    }
-
-    if (!result && this.results_.length === 1) {
-      result = this.results_[0];
-    }
-
+  if (this.highlighted_.length) {
+    result = this.results_[this.highlighted_.getAttribute('rowIndex')];
+  } else if (this.results_.length === 1) {
+    result = this.results_[0];
   }
 
   if (result) {
 
-    this.result_ = result;
-
-    this.getInputElement().value(result[0].replace(/<[^>]+>/g, ''));
-
-    if (new rocket.Elements([document.body]).contains(this.getInputElement())) {
-      this.getInputElement()
-          .setSelectionRange(0, result[0].length)
-          .focus();
-    }
-
-    this.dispatchEvent('select');
+    this.setResult(result);
 
   }
 
@@ -351,7 +351,7 @@ rocket.AutoSuggest.prototype.enter = function(opt_result) {
 /**
 Override.
 */
-rocket.AutoSuggest.prototype.hide = function() {
+rocket.AutoSuggest.prototype.hideInternal = function() {
 
   this.container_.removeEventListener();
 
@@ -359,15 +359,13 @@ rocket.AutoSuggest.prototype.hide = function() {
 
   delete this.container_;
 
-  this.dispatchEvent('hide');
-
 };
 
 
 /**
 Override.
 */
-rocket.AutoSuggest.prototype.up = function() {
+rocket.AutoSuggest.prototype.upInternal = function() {
 
   var rows = this.tbody_.children();
 
@@ -389,7 +387,7 @@ rocket.AutoSuggest.prototype.up = function() {
 /**
 Override.
 */
-rocket.AutoSuggest.prototype.down = function() {
+rocket.AutoSuggest.prototype.downInternal = function() {
 
   var rows = this.tbody_.children();
 
