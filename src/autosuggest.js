@@ -197,11 +197,11 @@ rocket.AutoSuggest.prototype.setResults = function(results) {
 
 
 /**
-@param {function(string)} fnct
+@param {function(string)} query
 */
-rocket.AutoSuggest.prototype.query = function(fnct) {
+rocket.AutoSuggest.prototype.setQuery = function(query) {
 
-  this.query_ = fnct;
+  this.query_ = query;
 
 };
 
@@ -224,7 +224,7 @@ rocket.AutoSuggest.prototype.data = function(data) {
 
   var self = this;
 
-  this.query(/** @param {string} query */ (function(query) {
+  this.query_ = (/** @param {string} query */ (function(query) {
 
     var results = [];
 

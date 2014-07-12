@@ -23,7 +23,7 @@ position.
 */
 rocket.Draggable = function() {
 
-  this.bounds_ = new rocket.Elements([document.body]);
+  this.bounds_ = rocket.$('html');
 
 };
 rocket.inherits(rocket.Draggable, rocket.Component);
@@ -93,35 +93,32 @@ rocket.Draggable.prototype.append_child_ = false;
 
 
 /**
+@private
+@type {rocket.Elements}
+*/
+rocket.Draggable.prototype.bounds_;
+
+
+/**
 Prevent the Element from being moved on the horizontal x axis.
 
-@param {boolean=} opt_fix
-@return {boolean} Whether the horizontal x axis is currently fixed.
+@param {boolean} fix
 */
-rocket.Draggable.prototype.fixX = function(opt_fix) {
+rocket.Draggable.prototype.setFixX = function(fix) {
 
-  if (arguments.length) {
-    this.fixX_ = /** @type {boolean} */ (opt_fix);
-  }
-
-  return this.fixX_;
+  this.fixX_ = fix;
 
 };
 
 
 /**
-Prevent the Element from being moved on the vertical y axis.
+Prevent the Element from being moved on the horizontal y axis.
 
-@param {boolean=} opt_fix
-@return {boolean} Whether the vertical y axis is currently fixed.
+@param {boolean} fix
 */
-rocket.Draggable.prototype.fixY = function(opt_fix) {
+rocket.Draggable.prototype.setFixY = function(fix) {
 
-  if (arguments.length) {
-    this.fixY_ = /** @type {boolean} */ (opt_fix);
-  }
-
-  return this.fixY_;
+  this.fixY_ = fix;
 
 };
 
@@ -132,16 +129,11 @@ with its position set to absolute.
 
 Defaults to true.
 
-@param {boolean=} opt_fill
-@return {boolean} Whether to draw a filler Element.
+@param {boolean} fill
 */
-rocket.Draggable.prototype.fill = function(opt_fill) {
+rocket.Draggable.prototype.setFill = function(fill) {
 
-  if (arguments.length) {
-    this.fill_ = /** @type {boolean} */ (opt_fill);
-  }
-
-  return this.fill_;
+  this.fill_ = fill;
 
 };
 
@@ -152,16 +144,11 @@ dragging is initiated.
 
 Defaults to false.
 
-@param {boolean=} opt_z_index
-@return {boolean} Whether to increment the zIndex.
+@param {boolean} z_index
 */
-rocket.Draggable.prototype.zIndex = function(opt_z_index) {
+rocket.Draggable.prototype.setZIndex = function(z_index) {
 
-  if (arguments.length) {
-    this.z_index_ = /** @type {boolean} */ (opt_z_index);
-  }
-
-  return this.z_index_;
+  this.z_index_ = z_index;
 
 };
 
@@ -169,42 +156,24 @@ rocket.Draggable.prototype.zIndex = function(opt_z_index) {
 /**
 Whenever a Draggable is dragged, append it to the end of its parent container.
 
-@param {boolean=} opt_append_child
-@return {boolean} Whether to append the Draggable to the end of its parent.
+@param {boolean} append_child
 */
-rocket.Draggable.prototype.appendChild = function(opt_append_child) {
+rocket.Draggable.prototype.setAppendChild = function(append_child) {
 
-  if (arguments.length) {
-    this.append_child_ = /** @type {boolean} */ (opt_append_child);
-  }
-
-  return this.append_child_;
+  this.append_child_ = append_child;
 
 };
 
 
 /**
-@private
-@type {rocket.Elements}
-*/
-rocket.Draggable.prototype.bounds_;
-
-
-/**
 Define a bounding Element to restrict the movement of the draggable Element.
 
-@param {rocket.Elements=} opt_bounding_element
+@param {rocket.Elements} bounding_element
   A bounding Element.
-@return {rocket.Elements}
-  The current bounding Element.
 */
-rocket.Draggable.prototype.bound = function(opt_bounding_element) {
+rocket.Draggable.prototype.setBounds = function(bounding_element) {
 
-  if (arguments.length) {
-    this.bounds_ = rocket.$(opt_bounding_element);
-  }
-
-  return this.bounds_;
+  this.bounds_ = rocket.$(bounding_element);
 
 };
 
@@ -214,13 +183,6 @@ rocket.Draggable.prototype.bound = function(opt_bounding_element) {
 @type {rocket.Elements}
 */
 rocket.Draggable.prototype.filler_;
-
-
-/**
-@private
-@type {rocket.Elements}
-*/
-rocket.Draggable.prototype.element_;
 
 
 /**
@@ -235,7 +197,7 @@ Decorate.
 
 @param {rocket.Elements} element
 */
-rocket.Draggable.prototype.decorate = function(element) {
+rocket.Draggable.prototype.decorateInternal = function(element) {
 
   this.element_ = element;
 
@@ -371,12 +333,15 @@ Disposes this Component.
 
 if decorated, the moving Element will be returned to its original position.
 */
-rocket.Draggable.prototype.dispose = function() {
+rocket.Draggable.prototype.disposeInternal = function() {
 
   if (this.container_) {
 
-    if (!this.rendered()) {
-      this.container_.parentNode().insertBefore(this.element_, this.container_);
+    if (!this.getComponentRendered()) {
+      this.container_.parentNode().insertBefore(
+          this.getComponentElement(),
+          this.container_
+      );
     }
 
     this.container_.removeEventListener();

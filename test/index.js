@@ -51,6 +51,7 @@ rocket.ready(function(){
   // new rocket.AutoTab([$('input').i(0), $('input').i(1), $('input').i(2)]);
 
   (window.asg = new rocket.AutoSuggest()).render();
+  $('body').appendChild($.createElement('input'));
   (window.asl = new rocket.AutoSelect()).render();
   (window.msl = new rocket.ManualSelect()).render();
   (window.ti = new rocket.TimeInput()).render();
@@ -67,7 +68,7 @@ rocket.ready(function(){
   $('body').appendChild(d);
 
   (window.d = new rocket.Draggable()).decorate(d);
-  window.d.appendChild(true);
+  window.d.setAppendChild(true);
 
   var d = $.createElement('div').innerHTML('draggable').style({
     'padding': 50,
@@ -79,7 +80,7 @@ rocket.ready(function(){
   $('body').appendChild(d);
 
   (window.d = new rocket.Draggable()).decorate(d);
-  window.d.appendChild(true);
+  window.d.setAppendChild(true);
 
   var d = $.createElement('div').innerHTML('draggable').style({
     'padding': 50,
@@ -91,7 +92,7 @@ rocket.ready(function(){
   $('body').appendChild(d);
 
   (window.d = new rocket.Draggable()).decorate(d);
-  window.d.appendChild(true);
+  window.d.setAppendChild(true);
 
   var foo = [];
   for(var i = 0; i < 100; ++i){
@@ -102,7 +103,7 @@ rocket.ready(function(){
   asg.data(foo);
   msl.data(foo);
 
-  $('body,html').style({'height': '100%'});
+  // $('body,html').style({'height': '100%'});
 
   $('body').appendChild($.createElement('div').innerHTML(Math.random()));
   $('body').appendChild($.createElement('div').innerHTML(Math.random()));
@@ -123,15 +124,15 @@ rocket.ready(function(){
 
   var timeout;
   var infini = new rocket.InfiniScroll(len);
-  infini.height(600);
-  infini.query(function(index, length){
+  infini.setHeight(600);
+  infini.setQuery(function(index, length){
     var rows = [];
     for (var i = 0; i < length; ++i) {
       rows.push([i + index, i, index, length, $.random()]);
     }
     // clearTimeout(timeout)
     // timeout = setTimeout(function(){console.log('query index:"'+index+'" length:"'+length+'" RESULTS');
-      infini.results(rows);
+      infini.setResults(rows);
     // },3000);
   });
   // infini.padResults(true);
@@ -164,16 +165,17 @@ rocket.ManualSelect = function() {
   this.addEventListener('show', /** @this {rocket.AutoSelect} */ (function() {
 
     if (this.getResult()) {
-
-      this.getInputElement().value('');
       
       var self = this;
-      setTimeout(function(){
-        if (self.getResult) {
-          self.getInputElement().value(self.getResult()[0]).setSelectionRange(0, self.getResult()[0].length);
-        }
-      });
-
+      var fake = function(){
+        self.getInputElement().value('');
+        self.change();
+        self.getInputElement().value(self.getResult()[0]).setSelectionRange(0, self.getResult()[0].length);
+      };
+      
+      fake();
+      setTimeout(fake, 0);
+      
     }
 
   }));

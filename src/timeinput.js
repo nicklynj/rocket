@@ -19,9 +19,9 @@ rocket.TimeInput.prototype.container_;
 
 /**
 */
-rocket.TimeInput.prototype.show = function() {
+rocket.TimeInput.prototype.showInternal = function() {
 
-  var rect = this.getInput().getBoundingClientRect();
+  var rect = this.getInputElement().getBoundingClientRect();
 
   /** @type {HTMLTableCellElement} */
   var highlighted;
@@ -86,7 +86,7 @@ rocket.TimeInput.prototype.show = function() {
 
         if (hour && minute && meridian) {
 
-          self.getInput()
+          self.getInputElement()
               .value(
                   rocket.padLeft(
                       hour.innerHTML,
@@ -100,13 +100,12 @@ rocket.TimeInput.prototype.show = function() {
               .setSelectionRange(0, 8);
 
           self.hide();
-          self.hidden(true);
 
         }
 
       }));
 
-  this.render_times_();
+  this.draw_times_();
 
   new rocket.Elements([document.body]).appendChild(this.container_);
 
@@ -118,7 +117,7 @@ rocket.TimeInput.prototype.show = function() {
 /**
 @private
 */
-rocket.TimeInput.prototype.render_times_ = function() {
+rocket.TimeInput.prototype.draw_times_ = function() {
 
   var table = rocket.createElement('table');
   var tbody = rocket.createElement('tbody');
@@ -194,13 +193,14 @@ rocket.TimeInput.prototype.render_times_ = function() {
 /**
 Override.
 */
-rocket.TimeInput.prototype.enter = function() {
+rocket.TimeInput.prototype.enterInternal = function() {
 
-  var time = rocket.strToTime(/** @type {string} */ (this.getInput().value()));
+  var time =
+      rocket.strToTime(/** @type {string} */ (this.getInputElement().value()));
 
   if (time) {
 
-    this.getInput().value(time);
+    this.getInputElement().value(time);
 
   }
 
@@ -209,7 +209,7 @@ rocket.TimeInput.prototype.enter = function() {
 
 /**
 */
-rocket.TimeInput.prototype.hide = function() {
+rocket.TimeInput.prototype.hideInternal = function() {
 
   this.container_.removeEventListener();
 

@@ -252,7 +252,7 @@ rocket.EventListener.event_listener_transformer_after_key_down_ =
 
           }
 
-          time_out = setTimeout(time_out_function, 1000);
+          time_out = setTimeout(time_out_function, 100);
 
         }
 

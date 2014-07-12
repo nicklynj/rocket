@@ -34,31 +34,17 @@ rocket.DateInput.prototype.calendar_month_;
 
 /**
 @private
-@type {number}
+@type {Date}
 */
-rocket.DateInput.prototype.selected_year_;
-
-
-/**
-@private
-@type {number}
-*/
-rocket.DateInput.prototype.selected_month_;
-
-
-/**
-@private
-@type {number}
-*/
-rocket.DateInput.prototype.selected_date_;
+rocket.DateInput.prototype.entered_date_;
 
 
 /**
 Override.
 */
-rocket.DateInput.prototype.show = function() {
+rocket.DateInput.prototype.showInternal = function() {
 
-  var rect = this.getInput().getBoundingClientRect();
+  var rect = this.getInputElement().getBoundingClientRect();
 
   /** @type {HTMLTableCellElement} */
   var highlighted;
@@ -106,16 +92,16 @@ rocket.DateInput.prototype.show = function() {
 
         if (this.innerHTML === '&lt;&lt;') {
           --self.calendar_year_;
-          self.change(true);
+          self.draw_calendar_();
         } else if (this.innerHTML === '&lt;') {
           --self.calendar_month_;
-          self.change(true);
+          self.draw_calendar_();
         } else if (this.innerHTML === '&gt;&gt;') {
           ++self.calendar_year_;
-          self.change(true);
+          self.draw_calendar_();
         } else if (this.innerHTML === '&gt;') {
           ++self.calendar_month_;
-          self.change(true);
+          self.draw_calendar_();
         } else {
 
           var date = +this.innerHTML;
@@ -153,7 +139,7 @@ rocket.DateInput.prototype.show = function() {
 
             }
 
-            self.getInput()
+            self.getInputElement()
                 .value(
                     rocket.padLeft(month, 2, '0') + '/' +
                     rocket.padLeft(this.innerHTML, 2, '0') + '/' +
@@ -163,7 +149,6 @@ rocket.DateInput.prototype.show = function() {
                 .focus();
 
             self.hide();
-            self.hidden(true);
 
           }
 
@@ -171,32 +156,42 @@ rocket.DateInput.prototype.show = function() {
 
       }));
 
+  this.changeInternal();
+
   new rocket.Elements([document.body]).appendChild(this.container_);
 
   this.container_.fit();
+
 };
 
 
 /**
 Override.
 */
-rocket.DateInput.prototype.enter = function() {
-  if (this.selected_date_) {
-    this.getInput()
+rocket.DateInput.prototype.enterInternal = function() {
+
+  var date =
+      rocket.strToDate(
+          /** @type {string} */ (this.getInputElement().value())
+      );
+
+  if (date) {
+    this.getInputElement()
       .value(
-        rocket.padLeft(this.selected_month_ + 1, 2, '0') + '/' +
-        rocket.padLeft(this.selected_date_, 2, '0') + '/' +
-        this.selected_year_
+        rocket.padLeft(date.getMonth() + 1, 2, '0') + '/' +
+        rocket.padLeft(date.getDate(), 2, '0') + '/' +
+        date.getFullYear()
         )
       .setSelectionRange(0, 10);
   }
+
 };
 
 
 /**
 Override.
 */
-rocket.DateInput.prototype.hide = function() {
+rocket.DateInput.prototype.hideInternal = function() {
 
   this.container_.removeEventListener();
 
@@ -209,44 +204,28 @@ rocket.DateInput.prototype.hide = function() {
 
 /**
 Override.
-
-@param {boolean=} opt_ignore_selected
 */
-rocket.DateInput.prototype.change = function(opt_ignore_selected) {
+rocket.DateInput.prototype.changeInternal = function() {
 
-  var date = rocket.strToDate(/** @type {string} */ (this.getInput().value()));
+  this.entered_date_ =
+      rocket.strToDate(
+          /** @type {string} */ (this.getInputElement().value())
+      );
 
-  if (date) {
+  var date = this.entered_date_ || (new Date());
 
-    this.selected_year_ = date.getFullYear();
-    this.selected_month_ = date.getMonth();
-    this.selected_date_ = date.getDate();
+  this.calendar_year_ = date.getFullYear();
+  this.calendar_month_ = date.getMonth();
 
-  } else {
+  this.draw_calendar_();
 
-    delete this.selected_year_;
-    delete this.selected_month_;
-    delete this.selected_date_;
-    date = new Date();
+};
 
-  }
 
-  if (opt_ignore_selected) {
-
-    if (this.calendar_month_ < 0) {
-      --this.calendar_year_;
-    } else if (this.calendar_month_ > 11) {
-      ++this.calendar_year_;
-    }
-
-    this.calendar_month_ = (this.calendar_month_ + 12) % 12;
-
-  } else {
-
-    this.calendar_year_ = date.getFullYear();
-    this.calendar_month_ = date.getMonth();
-
-  }
+/**
+@private
+*/
+rocket.DateInput.prototype.draw_calendar_ = function() {
 
   var table = rocket.createElement('table');
   var tbody = rocket.createElement('tbody');
@@ -269,11 +248,11 @@ rocket.DateInput.prototype.change = function(opt_ignore_selected) {
 
   var tr = rocket.createElement('tr');
 
-  this.render_header_(tr);
+  this.draw_calendar_header_(tr);
 
   tbody.appendChild(tr);
 
-  this.render_calendar_(tbody);
+  this.draw_calendar_contents_(tbody);
 
   table.appendChild(tbody);
 
@@ -286,7 +265,7 @@ rocket.DateInput.prototype.change = function(opt_ignore_selected) {
 @private
 @param {rocket.Elements} tr
 */
-rocket.DateInput.prototype.render_header_ = function(tr) {
+rocket.DateInput.prototype.draw_calendar_header_ = function(tr) {
 
   var td;
 
@@ -362,7 +341,7 @@ rocket.DateInput.prototype.render_header_ = function(tr) {
 @private
 @param {rocket.Elements} tbody
 */
-rocket.DateInput.prototype.render_calendar_ = function(tbody) {
+rocket.DateInput.prototype.draw_calendar_contents_ = function(tbody) {
 
   var days_in_month =
       32 -
@@ -437,9 +416,10 @@ rocket.DateInput.prototype.render_calendar_ = function(tbody) {
         }
 
         if (
-            (this.selected_year_ === this.calendar_year_) &&
-            (this.selected_month_ === this.calendar_month_) &&
-            (this.selected_date_ === month_date)
+            (this.entered_date_) &&
+            (this.entered_date_.getFullYear() === this.calendar_year_) &&
+            (this.entered_date_.getMonth() === this.calendar_month_) &&
+            (this.entered_date_.getDate() === month_date)
         ) {
           td.style({
             'background-color': '#10246A',
@@ -465,6 +445,5 @@ rocket.DateInput.prototype.render_calendar_ = function(tbody) {
     tbody.appendChild(tr);
 
   }
-
 
 };

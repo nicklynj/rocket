@@ -121,11 +121,15 @@ rocket.Input.prototype.decorateInternal = function(input) {
 
             e.stopPropagation();
 
-            (new rocket.Elements([document]))
-                .dispatchEvent('mousedown')
-                .dispatchEvent('touchstart');
+            if (!self.input_displayed_) {
 
-            self.show();
+              (new rocket.Elements([document]))
+                  .dispatchEvent('mousedown')
+                  .dispatchEvent('touchstart');
+
+              self.show();
+
+            }
 
           }
       )
@@ -134,7 +138,10 @@ rocket.Input.prototype.decorateInternal = function(input) {
           /** @param {Event} e */
           function(e) {
 
-            if (e.which !== rocket.KEY.enter) {
+            if (
+                (e.which !== rocket.KEY.enter) &&
+                (e.which !== rocket.KEY.shift)
+            ) {
 
               self.show();
 
@@ -169,6 +176,7 @@ rocket.Input.prototype.decorateInternal = function(input) {
               } else if (e.which === rocket.KEY.enter) {
 
                 self.enter();
+
                 self.hide();
 
               } else if (e.which === rocket.KEY.tab) {
@@ -191,7 +199,9 @@ dispose
 rocket.Input.prototype.disposeInternal = function() {
 
   if (this.input_displayed_) {
+
     this.hide();
+
   }
 
   this.getInputElement().removeEventListener('.Input');
@@ -215,7 +225,7 @@ rocket.Input.prototype.show = function() {
 
   }
 
-  var input_value = this.getInputElement().value();
+  var input_value = /** @type {string} */ (this.getInputElement().value());
 
   if (this.input_value_ !== input_value) {
 
@@ -291,6 +301,12 @@ rocket.Input.prototype.pageDown = function() {
 rocket.Input.prototype.change = function() {
   this.changeInternal();
 };
+
+
+/**
+Override me.
+*/
+rocket.Input.prototype.changeInternal = function() {};
 
 
 /**

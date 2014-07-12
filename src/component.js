@@ -49,6 +49,14 @@ rocket.Component.prototype.component_element_created_ = false;
 /**
 @return {boolean}
 */
+rocket.Component.prototype.getComponentRendered = function() {
+  return this.component_rendered_;
+};
+
+
+/**
+@return {boolean}
+*/
 rocket.Component.prototype.getComponentDisposed = function() {
   return this.component_disposed_;
 };
@@ -104,9 +112,9 @@ rocket.Component.prototype.decorate = function(element) {
 
   if (!this.component_decorated_) {
 
-    this.component_decorated_ = true;
-
     this.decorateInternal(element);
+
+    this.component_decorated_ = true;
 
   }
 

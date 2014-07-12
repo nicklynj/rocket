@@ -50,18 +50,11 @@ to prevent seeing empty rows when scrolling.
 
 Defaults to false.
 
-@param {boolean=} opt_pad_results
-@return {boolean}
+@param {boolean} pad_results
 */
-rocket.InfiniScroll.prototype.padResults = function(opt_pad_results) {
+rocket.InfiniScroll.prototype.setPadResults = function(pad_results) {
 
-  if (arguments.length) {
-
-    this.pad_results_ = /** @type {boolean} */ (opt_pad_results);
-
-  }
-
-  return this.pad_results_;
+  this.pad_results_ = pad_results;
 
 };
 
@@ -69,40 +62,24 @@ rocket.InfiniScroll.prototype.padResults = function(opt_pad_results) {
 /**
 Set or get the height of the scrollable container.
 
-@param {number=} opt_height
-@return {number}
+@param {number} height
 */
-rocket.InfiniScroll.prototype.height = function(opt_height) {
+rocket.InfiniScroll.prototype.setHeight = function(height) {
 
-  if (arguments.length) {
-
-    this.height_ = /** @type {number} */ (opt_height);
-
-  }
-
-  return this.height_;
+  this.height_ = height;
 
 };
 
 
 /**
 The given query function is called with two parameters: index and length.
-The given query function then must call InfiniScroll.results(data).
+The given query function then must call InfiniScroll.setResults(data).
 
-@param {function(number, number)=} opt_query
-@return {function(number, number)}
+@param {function(number, number)} query
 */
-rocket.InfiniScroll.prototype.query = function(opt_query) {
+rocket.InfiniScroll.prototype.setQuery = function(query) {
 
-  if (arguments.length) {
-
-    this.query_ =
-        /** @type {(function(number, number):Array.<Array.<string>>)} */
-        (opt_query);
-
-  }
-
-  return this.query_;
+  this.query_ = query;
 
 };
 
@@ -122,7 +99,7 @@ rocket.InfiniScroll.prototype.data = function(data) {
 
   return this.query_ = /** @param {number} index @param {number} length */ (
       function(index, length) {
-        self.results(data.splice(index, length));
+        self.setResults(data.splice(index, length));
       });
 
 };
@@ -158,13 +135,6 @@ rocket.InfiniScroll.prototype.padding_;
 
 /**
 @private
-@type {rocket.Elements}
-*/
-rocket.InfiniScroll.prototype.element_;
-
-
-/**
-@private
 @type {function()}
 */
 rocket.InfiniScroll.prototype.element_scroller_;
@@ -189,9 +159,7 @@ Decorate.
 
 @param {rocket.Elements} element
 */
-rocket.InfiniScroll.prototype.decorate = function(element) {
-
-  this.element_ = element;
+rocket.InfiniScroll.prototype.decorateInternal = function(element) {
 
   element.style({
     'height': this.height_,
@@ -285,7 +253,7 @@ column is a String.
 
 @param {Array.<Array.<string>>} data
 */
-rocket.InfiniScroll.prototype.results = function(data) {
+rocket.InfiniScroll.prototype.setResults = function(data) {
 
   var rows = data.length;
   var cols = data[0].length;
@@ -326,17 +294,16 @@ rocket.InfiniScroll.prototype.results = function(data) {
 /**
 Dispose.
 */
-rocket.InfiniScroll.prototype.dispose = function() {
+rocket.InfiniScroll.prototype.disposeInternal = function() {
 
   if (this.container_) {
 
-    this.element_.removeEventListener('scroll', this.element_scroller_);
+    this.getComponentElement().removeEventListener(
+        'scroll',
+        this.element_scroller_
+    );
 
-    delete this.padding_;
     delete this.container_;
-    delete this.table_;
-
-    this.disposeInternal();
 
   }
 

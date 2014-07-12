@@ -17,8 +17,6 @@ rocket.AutoSelect = function() {
 
       this.getInputElement().value('');
 
-      this.change();
-
       var rect = this.getInputElement().getBoundingClientRect();
 
       this.place_holder_
