@@ -257,6 +257,17 @@ rocket.ready(function() {
     }
   };
    
+  contents['final'] = function(){
+    contents.apply(this, arguments);
+  };
+  $.inherits(contents['final'], contents);
+  contents['final'].prototype.legend = 'Final';
+  contents['final'].prototype.render_contents = function(parent) {
+    if (docs[this.name].tags['final']) {
+      parent.appendChild($.createElement('div').innerHTML('This method is final and cannot be overriden!'))
+    }
+  };
+   
   contents.types = function(){
     contents.apply(this, arguments);
   };
@@ -469,6 +480,7 @@ rocket.ready(function() {
     (new contents.prototypes(this.name)).render(parent);
     (new contents.types(this.name)).render(parent);
     (new contents.returns(this.name)).render(parent);
+    (new contents['final'](this.name)).render(parent);
     (new contents.sees(this.name)).render(parent);
     (new contents.examples(this.name)).render(parent);
     (new contents.links(this.name)).render(parent);
