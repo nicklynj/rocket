@@ -5,13 +5,16 @@ Flips an Object's keys and values.
 
 @param {Object} obj The Object.
 @return {Object} The flipped Object.
-@example
-// given
-var foo = {'a': 'b', 'c': 'd', 'e': 'd'};
 
-rocket.flip(foo);
-// returns
-{'b': 'a', 'd': 'e'};
+@test {{'b': 'a', 'd': 'e'}} Flip an Object.
+rocket.flip({'a': 'b', 'c': 'd', 'e': 'd'});
+
+@test {{'1': 'b'}} Flip an Object with duplicate values.
+rocket.flip({'a': 1, 'b': 1});
+
+@test {{}} Flip an empty Object.
+rocket.flip({});
+
 */
 rocket.flip = function(obj) {
 

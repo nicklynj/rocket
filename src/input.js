@@ -4,10 +4,9 @@
 /**
 A helper class for creating components that improve an HTMLInputElement.
 
-This class handles showing/hiding when appropriate.
-
 The intention is that children components will inherit this class and override
-the show/hide prototype methods.
+the *Internal methods: showInternal, hideInternal, upInternal, downInternal,
+changeInternal, enterInternal, pageUpInternal, and pageDownInternal.
 
 @constructor
 @extends {rocket.Component}
@@ -98,6 +97,8 @@ rocket.Input.prototype.input_remove_document_listener_ = function() {
 
 
 /**
+Overridden method from the Input helper class.
+
 @param {rocket.Elements} input
 */
 rocket.Input.prototype.decorateInternal = function(input) {
@@ -195,7 +196,7 @@ rocket.Input.prototype.decorateInternal = function(input) {
 
 
 /**
-dispose
+Overridden method from the Input helper class.
 */
 rocket.Input.prototype.disposeInternal = function() {
 
@@ -212,6 +213,8 @@ rocket.Input.prototype.disposeInternal = function() {
 
 
 /**
+Calls showInternal when focus is given to this HTMLInputElement.
+
 @final
 */
 rocket.Input.prototype.show = function() {
@@ -239,6 +242,8 @@ rocket.Input.prototype.show = function() {
 
 
 /**
+Calls hideInternal when focus is taken from this HTMLInputElement.
+
 @final
 */
 rocket.Input.prototype.hide = function() {
@@ -257,6 +262,8 @@ rocket.Input.prototype.hide = function() {
 
 
 /**
+Calls enterInternal when the user presses the enter key.
+
 @final
 */
 rocket.Input.prototype.enter = function() {
@@ -269,6 +276,8 @@ rocket.Input.prototype.enter = function() {
 
 
 /**
+Calls upInternal when the user presses the up key.
+
 @final
 */
 rocket.Input.prototype.up = function() {
@@ -277,6 +286,8 @@ rocket.Input.prototype.up = function() {
 
 
 /**
+Calls downInternal when the user presses the down key.
+
 @final
 */
 rocket.Input.prototype.down = function() {
@@ -285,6 +296,8 @@ rocket.Input.prototype.down = function() {
 
 
 /**
+Calls pageUpInternal when the user presses the pageUp key.
+
 @final
 */
 rocket.Input.prototype.pageUp = function() {
@@ -293,6 +306,8 @@ rocket.Input.prototype.pageUp = function() {
 
 
 /**
+Calls pageDownInternal when the user presses the pageDown key.
+
 @final
 */
 rocket.Input.prototype.pageDown = function() {
@@ -301,6 +316,8 @@ rocket.Input.prototype.pageDown = function() {
 
 
 /**
+Calls changeInternal when the user changes the value of the HTMLInputElement.
+
 @final
 */
 rocket.Input.prototype.change = function() {
@@ -309,43 +326,50 @@ rocket.Input.prototype.change = function() {
 
 
 /**
-Override me.
+Override this method in a child class to handle the user
+changing the value of this HTMLInputElement.
 */
 rocket.Input.prototype.changeInternal = function() {};
 
 
 /**
-Override me.
+Override this method in a child class to handle the user giving focus
+to this HTMLInputElement.
 */
 rocket.Input.prototype.showInternal = function() {};
 
 
 /**
-Override me.
+Override this method in a child class to handle the user removing focus
+from this HTMLInputElement.
 */
 rocket.Input.prototype.hideInternal = function() {};
 
 
 /**
-Override me.
+Override this method in a child class to handle the user pressing
+the enter key.
 */
 rocket.Input.prototype.enterInternal = function() {};
 
 
 /**
-Override me.
+Override this method in a child class to handle the user pressing
+the up key.
 */
 rocket.Input.prototype.upInternal = function() {};
 
 
 /**
-Override me.
+Override this method in a child class to handle the user pressing
+the down key.
 */
 rocket.Input.prototype.downInternal = function() {};
 
 
 /**
-Override me.
+Override this method in a child class to handle the user pressing
+the pageUp key.
 */
 rocket.Input.prototype.pageUpInternal = function() {
   for (var i = 0; i < 5; ++i) {
@@ -355,7 +379,8 @@ rocket.Input.prototype.pageUpInternal = function() {
 
 
 /**
-Override me.
+Override this method in a child class to handle the user pressing
+the pageDown key.
 */
 rocket.Input.prototype.pageDownInternal = function() {
   for (var i = 0; i < 5; ++i) {

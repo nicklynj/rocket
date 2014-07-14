@@ -5,7 +5,8 @@
 A helper class for creating classes that interact with the DOM.
 
 The intention is that children classes will inherit this class and override
-the createElementInternal, decorateInternal, and disposeInternal methods.
+the *Internal methods:
+createElementInternal, decorateInternal, and disposeInternal.
 
 These methods are final and cannot be overriden:
 createElement, decorate, dispose, and render.
@@ -47,6 +48,8 @@ rocket.Component.prototype.component_element_created_ = false;
 
 
 /**
+Returns true if this component has been rendered.
+
 @return {boolean}
 */
 rocket.Component.prototype.getComponentRendered = function() {
@@ -55,6 +58,8 @@ rocket.Component.prototype.getComponentRendered = function() {
 
 
 /**
+Returns trus if this component has been disposed.
+
 @return {boolean}
 */
 rocket.Component.prototype.getComponentDisposed = function() {
@@ -70,6 +75,8 @@ rocket.Component.prototype.component_element_;
 
 
 /**
+Set the HTMLElement that this component represents.
+
 @param {rocket.Elements} element
 */
 rocket.Component.prototype.setComponentElement = function(element) {
@@ -78,6 +85,8 @@ rocket.Component.prototype.setComponentElement = function(element) {
 
 
 /**
+Get the HTMLElement that this component represents.
+
 @return {rocket.Elements}
 */
 rocket.Component.prototype.getComponentElement = function() {
@@ -86,6 +95,9 @@ rocket.Component.prototype.getComponentElement = function() {
 
 
 /**
+Create the HTMLElement that this component represents
+by calling createElementInternal.
+
 @final
 @return {rocket.Elements}
 */
@@ -105,6 +117,8 @@ rocket.Component.prototype.createElement = function() {
 
 
 /**
+Decorate the given HTMLElement by calling decorateInternal.
+
 @final
 @param {rocket.Elements} element
 */
@@ -122,6 +136,12 @@ rocket.Component.prototype.decorate = function(element) {
 
 
 /**
+Render the an HTMLElement created by createElement and decorated by
+decorate onto the optionally given parent or the HTMLBodyElement.
+
+Render calls the createElement and the decorate methods; then Render
+attaches the decorated HTMLElement to the given parent or the HTMLBodyElement.
+
 @final
 @param {rocket.Elements=} opt_parent
 */
@@ -147,7 +167,12 @@ rocket.Component.prototype.render = function(opt_parent) {
 
 
 /**
-dispose
+Removes any EventListener added to this Component and removes the
+HTMLElement from its parent if this Component was rendered.
+
+If this Component was decorated, the HTMLElement is not removed
+from its parent when disposed.
+
 @final
 */
 rocket.Component.prototype.dispose = function() {
@@ -172,7 +197,8 @@ rocket.Component.prototype.dispose = function() {
 
 
 /**
-Override me.
+Override this method in a child class to return an HTMLElement.
+
 @return {rocket.Elements}
 */
 rocket.Component.prototype.createElementInternal = function() {
@@ -183,13 +209,16 @@ rocket.Component.prototype.createElementInternal = function() {
 
 
 /**
-Override me.
+Override this method in a child class to decorate or add functionality to
+an HTMLElement.
+
 @param {rocket.Elements} element
 */
 rocket.Component.prototype.decorateInternal = function(element) {};
 
 
 /**
-Override me.
+Override this method in a child class to remove any added EventListener
+or HTMLElement.
 */
 rocket.Component.prototype.disposeInternal = function() {};

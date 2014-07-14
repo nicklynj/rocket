@@ -8,16 +8,19 @@ Descends recursively into Objects.
 @param {Object} a An Object to compare.
 @param {Object} b An Object to compare.
 @return {boolean} Whether the given Objects contain identical properties.
+
 @test {true} Objects with same properties.
 rocket.equal({'a': 'b', 'c': [0, 1]}, {'a': 'b', 'c': [0, 1]});
+
 @test {false} Objects tested with equal operator.
 ({'a': 'b', 'c': [0, 1]} === {'a': 'b', 'c': [0, 1]});
+
 @test {false} Objects without same properties.
 rocket.equal({'a': 'b'}, {'a': 'b', 'c': [0, 1]});
-@test {true} HTMLBodyElement.
-rocket.equal(document.body, document.body);
+
 @test {true} Equivalent HTMLDivElement.
 rocket.equal(document.createElement('div'), document.createElement('div'));
+
 @test {false} Equivalent HTMLDivElement but appended to another Element.
 var foo = document.createElement('div');
 var bar = document.createElement('div');
@@ -25,8 +28,10 @@ var baz = document.createElement('div');
 baz.appendChild(foo);
 baz.appendChild(bar);
 rocket.equal(foo, bar);
+
 @test {false} Two different HTMLElement.
 rocket.equal(document.createElement('div'), document.createElement('span'));
+
 @test {true} Circular references that are equal.
 var foo = {};
 var bar = {};
@@ -41,6 +46,7 @@ baz.bar = bar;
 baz.baz = 'baz';
 
 rocket.equal(foo, bar);
+
 @test {false} Circular references that are not equal.
 var foo = {};
 var bar = {};
@@ -55,14 +61,19 @@ baz.bar = bar;
 baz.baz = 'baz';
 
 rocket.equal(foo, bar);
+
 @test {true} HTMLDocumentElement.
 rocket.equal(document, document);
+
 @test {false} HTMLDocumentElement and HTMLBodyElement.
 rocket.equal(document.body, document);
+
 @test {false} HTMLDocumentElement and HTMLBodyElement.
 rocket.equal(document, document.body);
+
 @test {true} HTMLBodyElement.
 rocket.equal(document.body, document.body);
+
 */
 rocket.equal = function(a, b) {
 

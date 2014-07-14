@@ -2,11 +2,12 @@
 
 
 /**
-AutoTab
+AutoTab will automatically "tab" thru an Array of HTMLInputElement.
 
 @constructor
 @implements {rocket.Disposable}
 @param {rocket.Elements} elements
+An Array of HTMLInputElement or a rocket.Elements.
 */
 rocket.AutoTab = function(elements) {
 
@@ -142,7 +143,7 @@ rocket.AutoTab.prototype.listener_;
 
 
 /**
-dispose
+Remove all added EventListener from the given HTMLInputElement.
 */
 rocket.AutoTab.prototype.dispose = function() {
 

@@ -2,9 +2,18 @@
 
 
 /**
-AutoSuggest
+AutoSelect is intended to be used to provide suggestions to the user as they
+enter values into an HTMLInputElement.
+
+It allows the user to select one option from a list of available options.  It
+does not force the user to select one of the given options.
+
+If the user enters a string that does not correspond to an available option,
+the entered string will be remain when focus leaves the HTMLInputElement.
 
 @constructor
+@see {rocket.Input}
+@see {rocket.AutoSelect}
 @extends {rocket.Input}
 */
 rocket.AutoSuggest = function() {};
@@ -68,6 +77,8 @@ rocket.AutoSuggest.prototype.query_;
 
 
 /**
+Get the HTMLDivElement container holding the query result options.
+
 @return {rocket.Elements}
 */
 rocket.AutoSuggest.prototype.getContainer = function() {
@@ -76,6 +87,8 @@ rocket.AutoSuggest.prototype.getContainer = function() {
 
 
 /**
+Get the HTMLTableElement holding the query result options.
+
 @return {rocket.Elements}
 */
 rocket.AutoSuggest.prototype.getTable = function() {
@@ -84,6 +97,8 @@ rocket.AutoSuggest.prototype.getTable = function() {
 
 
 /**
+Get the HTMLTableBodyElement holding the query result options.
+
 @return {rocket.Elements}
 */
 rocket.AutoSuggest.prototype.getTBody = function() {
@@ -92,7 +107,7 @@ rocket.AutoSuggest.prototype.getTBody = function() {
 
 
 /**
-Override.
+Overridden method from the Input helper class.
 */
 rocket.AutoSuggest.prototype.showInternal = function() {
 
@@ -152,6 +167,8 @@ rocket.AutoSuggest.prototype.showInternal = function() {
 
 
 /**
+Overridden method from the Input helper class.
+
 */
 rocket.AutoSuggest.prototype.changeInternal = function() {
 
@@ -211,6 +228,23 @@ rocket.AutoSuggest.prototype.draw_results_ = function() {
 
 
 /**
+Set the results following a query.
+
+Results is an Array of Arrays that are rows.  Each row is an integer indexed
+Array of columns.
+
+An integer indexed row could be for example:
+['column one', 'column two', 'column three']
+{0: 'column one', 1: 'column two', 2: 'column three'}
+
+Non-numeric values can also be contained in each row Array; these non-numeric
+values will be returned via a call to the getResult method however, they will
+not be displayed to the user in the result options.
+
+A row containing a non-integer key could be for example:
+['column one', 'column two', 'column three']
+{0: 'column one', 1: 'column two', 2: 'column three', 'identifier': 12345}
+
 @param {Array.<Object.<number, string>>} results
 */
 rocket.AutoSuggest.prototype.setResults = function(results) {
@@ -223,6 +257,16 @@ rocket.AutoSuggest.prototype.setResults = function(results) {
 
 
 /**
+Set the query function called when the value of the HTMLInputElement
+is changed.
+
+The query function takes a single parameter: the query string.  The function
+should then call setResults() with an appropriate result Array based upon the
+query string.
+
+Since results are set with a call to setResults(), the query function could
+perform an XMLHttpRequest call to asynchronously retrieve the results.
+
 @param {function(string)} query
 */
 rocket.AutoSuggest.prototype.setQuery = function(query) {
@@ -233,6 +277,13 @@ rocket.AutoSuggest.prototype.setQuery = function(query) {
 
 
 /**
+Create and set a query function based upon an Array of data.
+
+The query function will include the row in the call to setResults
+if any integer key contains the given string.
+
+Comparisons are not made case sensitive.
+
 @param {Array.<Object.<number, string>>} data
 */
 rocket.AutoSuggest.prototype.data = function(data) {
@@ -326,6 +377,15 @@ rocket.AutoSuggest.prototype.highlight_ = function(element, scroll) {
 
 
 /**
+Set the current result.
+
+This can be used to set a default, inital, or pre-suggested value.
+
+Result is an integer index Array of columns.
+
+The result Array could also contain non-integer columns as per defined
+in the setResults() call.
+
 @param {Object.<number, string>} result
 */
 rocket.AutoSuggest.prototype.setResult = function(result) {
@@ -338,6 +398,10 @@ rocket.AutoSuggest.prototype.setResult = function(result) {
 
 
 /**
+Get the currently suggested result.
+
+This result may contain non-integer columns from the setResults() call.
+
 @return {Object.<number, string>}
 */
 rocket.AutoSuggest.prototype.getResult = function() {
@@ -346,10 +410,9 @@ rocket.AutoSuggest.prototype.getResult = function() {
 
 
 /**
-Override.
-@param {Object.<number, string>=} opt_result
+Overridden method from the Input helper class.
 */
-rocket.AutoSuggest.prototype.enterInternal = function(opt_result) {
+rocket.AutoSuggest.prototype.enterInternal = function() {
 
   var result;
 
@@ -377,7 +440,7 @@ rocket.AutoSuggest.prototype.enterInternal = function(opt_result) {
 
 
 /**
-Override.
+Overridden method from the Input helper class.
 */
 rocket.AutoSuggest.prototype.hideInternal = function() {
 
@@ -391,7 +454,7 @@ rocket.AutoSuggest.prototype.hideInternal = function() {
 
 
 /**
-Override.
+Overridden method from the Input helper class.
 */
 rocket.AutoSuggest.prototype.upInternal = function() {
 
@@ -413,7 +476,7 @@ rocket.AutoSuggest.prototype.upInternal = function() {
 
 
 /**
-Override.
+Overridden method from the Input helper class.
 */
 rocket.AutoSuggest.prototype.downInternal = function() {
 

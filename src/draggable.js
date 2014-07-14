@@ -156,6 +156,8 @@ rocket.Draggable.prototype.setZIndex = function(z_index) {
 /**
 Whenever a Draggable is dragged, append it to the end of its parent container.
 
+Defaults to false.
+
 @param {boolean} append_child
 */
 rocket.Draggable.prototype.setAppendChild = function(append_child) {
@@ -193,7 +195,7 @@ rocket.Draggable.prototype.mouse_up_handler_;
 
 
 /**
-Decorate.
+Overridden method from the Input helper class.
 
 @param {rocket.Elements} element
 */
@@ -329,7 +331,7 @@ rocket.Draggable.prototype.decorateInternal = function(element) {
 
 
 /**
-Disposes this Component.
+Overridden method from the Component helper class.
 
 if decorated, the moving Element will be returned to its original position.
 */

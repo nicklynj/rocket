@@ -2,9 +2,15 @@
 
 
 /**
-AutoSelect
+AutoSelect is intended to be used as a replacement for an HTMLSelectElement.
+
+It forces the user to select one option from a list of available options.
+
+If the user enters a string that does not correspond to an available option,
+the entered string will be deleted when focus leaves the HTMLInputElement.
 
 @constructor
+@see {rocket.Input}
 @extends {rocket.AutoSuggest}
 */
 rocket.AutoSelect = function() {
@@ -69,6 +75,9 @@ rocket.AutoSelect.prototype.place_holder_;
 
 
 /**
+Gets the HTMLDivElement placeholder that contains
+the currently selected option.
+
 @return {rocket.Elements}
 */
 rocket.AutoSelect.prototype.getPlaceHolder = function() {

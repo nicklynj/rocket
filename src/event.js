@@ -173,7 +173,7 @@ rocket.Event.prototype.defaultPrevented = false;
 
 
 /**
-Normalized stopPropagation.
+Normalized stopPropagation().
 
 @link
 https://developer.mozilla.org/en-US/docs/Web/API/event.stopPropagation

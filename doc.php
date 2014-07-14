@@ -138,7 +138,7 @@ class doc {
 		if (preg_match('/(.+?)^@/ms', $lines, $match)) {
 			return trim($match[1]);
 		} else {
-			return '';
+			return trim($lines);
 		}
 	}
 	private function parse_summary($tags, $description) {
@@ -148,7 +148,7 @@ class doc {
 			if (preg_match('/(.+?\.)(\s|$)/s', $description, $match)) {
 				return trim($match[1]);
 			} else {
-				return '';
+				return trim($description);
 			}
 		}
 	}

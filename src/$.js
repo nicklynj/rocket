@@ -21,23 +21,23 @@ Only the first Element of the optional context is used.
 @return {rocket.Elements}
   A new rocket.Elements object containing the matched Elements.
 
-@test {true} The string "body".
-rocket.$('body')[0] === document.body;
+@test {document.body} The string "body".
+rocket.$('body')[0];
 
-@test {true} The HTMLBodyElement.
-rocket.$(document.body)[0] === document.body;
+@test {document.body} The HTMLBodyElement.
+rocket.$(document.body)[0];
 
-@test {true} The HTMLBodyElement in an Array.
-rocket.$([document.body])[0] === document.body;
+@test {document.body} The HTMLBodyElement in an Array.
+rocket.$([document.body])[0];
 
-@test {true} The HTMLBodyElement length.
-rocket.$('body').length === 1;
+@test {1} The HTMLBodyElement length.
+rocket.$('body').length;
 
-@test {true} No parameters.
-rocket.$().length === 0;
+@test {0} No parameters.
+rocket.$().length;
 
-@test {true} Empty Array.
-rocket.$([]).length === 0;
+@test {0} Empty Array.
+rocket.$([]).length;
 
 */
 rocket.$ = function(query, opt_context) {

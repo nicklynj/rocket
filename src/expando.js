@@ -1,8 +1,8 @@
 
 
 /**
-The name of the property that is used to uniquely identify EventTargets when
-EventListeners are attached to them.
+The name of the property that is used to uniquely identify an EventTarget when
+an EventListener is attached to it.
 
 @type {string}
 */

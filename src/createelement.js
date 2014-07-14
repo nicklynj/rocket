@@ -1,7 +1,7 @@
 
 
 /**
-Shorcut method for creating a rocket.Elements object that contains only a newly
+Shortcut method for creating a rocket.Elements object that contains only a newly
 created Element.
 
 @param {string} tag_name
@@ -10,6 +10,12 @@ created Element.
 Element.
 @example
 rocket.createElement('div');
+
+@test {"DIV"} Create an HTMLDivElement.
+rocket.createElement('div')[0].nodeName;
+
+@test {1} The rocket.Elements has a length of one.
+rocket.createElement('div').length
 */
 rocket.createElement = function(tag_name) {
   return new rocket.Elements([document.createElement(tag_name)]);

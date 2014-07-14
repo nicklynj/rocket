@@ -1,7 +1,7 @@
 
 
 /**
-Allows passing an array of parameters to a constructor.
+Allows passing an array of parameters to a constructor as its arguments.
 
 Used for allowing a variable number of arguments to be passed to a constructor.
 

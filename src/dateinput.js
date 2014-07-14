@@ -2,7 +2,12 @@
 
 
 /**
-Helper class for getting a user entered date.
+DateInput is intended to be used quickly enter a Date.
+
+This is not an ideal class for entering past dates.
+
+This class only helps to populate a value into an HTMLInputElement.  It does
+not provide any methods to get the populated value.
 
 @constructor
 @extends {rocket.Input}
@@ -40,7 +45,7 @@ rocket.DateInput.prototype.entered_date_;
 
 
 /**
-Override.
+Overridden method from the Input helper class.
 */
 rocket.DateInput.prototype.showInternal = function() {
 
@@ -166,7 +171,7 @@ rocket.DateInput.prototype.showInternal = function() {
 
 
 /**
-Override.
+Overridden method from the Input helper class.
 */
 rocket.DateInput.prototype.enterInternal = function() {
 
@@ -189,7 +194,7 @@ rocket.DateInput.prototype.enterInternal = function() {
 
 
 /**
-Override.
+Overridden method from the Input helper class.
 */
 rocket.DateInput.prototype.hideInternal = function() {
 
@@ -203,7 +208,7 @@ rocket.DateInput.prototype.hideInternal = function() {
 
 
 /**
-Override.
+Overridden method from the Input helper class.
 */
 rocket.DateInput.prototype.changeInternal = function() {
 

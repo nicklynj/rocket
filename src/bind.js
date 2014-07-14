@@ -13,9 +13,8 @@ This creates and returns a new function.
 @example
 // call document.getElementyById using the document as this
 rocket.bind(document.getElementById, document)('id');
-@test {true} Bind getElementsByTagName and get the HTMLBodyElement.
-rocket.bind(document.getElementsByTagName, document)('body')[0] ===
-    document.body;
+@test {document.body} Bind getElementsByTagName and get the HTMLBodyElement.
+rocket.bind(document.getElementsByTagName, document)('body')[0];
 */
 rocket.bind = function(unbound, self, var_args) {
 
