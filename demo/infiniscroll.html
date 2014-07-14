@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<script src="../build/rocket.development.js"></script>
+</head>
+<body>
+<script>
+
+var length = rocket.$('body').appendChild(rocket.createElement('input').value(10000));
+
+rocket.$('body').appendChild(rocket.createElement('button').innerHTML('no padding, instant').addEventListener('click',function(){
+  var infini = new rocket.InfiniScroll(length.value());
+  infini.setHeight(600);
+  infini.setQuery(function(index, len){
+    var results = [];
+    for (var i = 0; i < len; ++i) {
+      results.push([i + index, i, index, len, rocket.random()]);
+    }
+    infini.setResults(results);
+  });
+  infini.render(container.innerHTML(''));
+}));
+
+rocket.$('body').appendChild(rocket.createElement('button').innerHTML('no padding, timeout').addEventListener('click',function(){
+  var timeout;
+  var infini = new rocket.InfiniScroll(length.value());
+  infini.setHeight(600);
+  infini.setQuery(function(index, len){
+    var results = [];
+    for (var i = 0; i < len; ++i) {
+      results.push([i + index, i, index, len, rocket.random()]);
+    }
+    clearTimeout(timeout)
+    timeout = setTimeout(function(){
+      infini.setResults(results);
+    }, 2000);
+  });
+  infini.render(container.innerHTML(''));
+}));
+
+rocket.$('body').appendChild(rocket.createElement('button').innerHTML('padding, timeout').addEventListener('click',function(){
+  var timeout;
+  var infini = new rocket.InfiniScroll(length.value());
+  infini.setHeight(600);
+  infini.setPadResults(true);
+  infini.setQuery(function(index, len){
+    var results = [];
+    for (var i = 0; i < len; ++i) {
+      results.push([i + index, i, index, len, rocket.random()]);
+    }
+    clearTimeout(timeout)
+    timeout = setTimeout(function(){
+      infini.setResults(results);
+    }, 2000);
+  });
+  infini.render(container.innerHTML(''));
+}));
+
+rocket.$('body').appendChild(rocket.createElement('button').innerHTML('innerhtml').addEventListener('click',function(){
+  var table = rocket.table(5, length.value());
+  var len = length.value();
+  for (var i = 0; i < len; ++i) {
+    table.trs[i].tds[0].innerHTML(i + 0);
+    table.trs[i].tds[1].innerHTML(i);
+    table.trs[i].tds[2].innerHTML(0);
+    table.trs[i].tds[3].innerHTML(len);
+    table.trs[i].tds[4].innerHTML(rocket.random());
+  }
+  container.innerHTML('').appendChild(rocket.createElement('div').style({'height': 600, 'overflow-y': 'auto'})).appendChild(table);
+}));
+
+var container = rocket.$('body').appendChild(rocket.createElement('div'));
+
+</script>
+</body>
+</html>

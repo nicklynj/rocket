@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+<script src="../build/rocket.development.js"></script>
+</head>
+<body>
+<script>
+
+var data = [
+  {0: 'NICK', 1: '2nd Col', 'not_displayed_value': Math.random()}, // array-like object
+  ['JAMES', '2nd Col'],
+  ['MICHAEL', '2nd Col'],
+  ['ROBERT', '2nd Col'],
+  ['JOHN', '2nd Col'],
+  ['DAVID', '2nd Col'],
+  ['MARY', '2nd Col'],
+  ['WILLIAM', '2nd Col'],
+  ['RICHARD', '2nd Col'],
+  ['LINDA', '2nd Col'],
+  ['THOMAS', '2nd Col'],
+  ['CHARLES', '2nd Col'],
+  ['MARK', '2nd Col'],
+  ['PATRICIA', '2nd Col'],
+  ['JENNIFER', '2nd Col'],
+  ['BARBARA', '2nd Col'],
+  ['JOSEPH', '2nd Col'],
+  ['SUSAN', '2nd Col'],
+  ['DONALD', '2nd Col'],
+  ['KAREN', '2nd Col'],
+  ['LISA', '2nd Col'],
+  ['STEVEN', '2nd Col'],
+  ['NANCY', '2nd Col'],
+  ['CHRISTOPHER', '2nd Col'],
+  ['BRIAN', '2nd Col'],
+  ['DANIEL', '2nd Col'],
+  ['LARRY', '2nd Col'],
+  ['JEFFREY', '2nd Col'],
+  ['PAUL', '2nd Col'],
+  ['RONALD', '2nd Col'],
+  ['GARY', '2nd Col']
+];
+
+var div = rocket.createElement('div').style({'padding': 30}).innerHTML('AutoSelect using data');
+var auto = new rocket.AutoSelect();
+
+// automatically create a query function based upon data
+auto.data(data);
+
+// manipulate the container when it's shown
+auto.addEventListener('show', function() {
+  this.getContainer().style({'width': 400});
+});
+
+// manipulate the results when they're drawn
+auto.addEventListener('drawResults', function() {
+  var first_row = this.getTable().firstElementChild().firstElementChild();
+  first_row.children().i(0).setAttribute({'width': '90%'});
+});
+auto.render(div);
+rocket.$('body').appendChild(div);
+
+// set the inital result
+auto.setResult(data[0]);
+
+// do something when something is selected
+auto.addEventListener('select', function() {
+  rocket.$('body').appendChild(
+      rocket.createElement('div')
+          .innerHTML(
+              'You selected:"'+this.getResult()[0]+':'+this.getResult()[1]+':'+this.getResult().not_displayed_value+'"'
+          )
+  );
+});
+
+
+
+
+
+var div = rocket.createElement('div').style({'padding': 30}).innerHTML('AutoSelect using setQuery');
+var auto = new rocket.AutoSelect();
+
+// manually create a query function using data
+auto.setQuery(function(str){
+  var results = [];
+  for (var i = 0; data[i]; ++i) {
+    if (data[i][0].indexOf(str.toUpperCase()) !== -1) {
+      results.push(data[i]);
+    }
+  }
+  // this query function could asynchronously get the data using an XMLHttpRequest
+  this.setResults(results);
+});
+
+// manipulate the container when it's shown
+auto.addEventListener('show', function() {
+  this.getContainer().style({'width': 400});
+});
+
+// manipulate the results when they're drawn
+auto.addEventListener('drawResults', function() {
+  var first_row = this.getTable().firstElementChild().firstElementChild();
+  first_row.children().i(0).setAttribute({'width': '90%'});
+});
+auto.render(div);
+rocket.$('body').appendChild(div);
+
+// set the inital result
+auto.setResult(data[0]);
+
+// do something when something is selected
+auto.addEventListener('select', function() {
+  rocket.$('body').appendChild(
+      rocket.createElement('div')
+          .innerHTML(
+              'You selected:"'+this.getResult()[0]+':'+this.getResult()[1]+':'+this.getResult().not_displayed_value+'"'
+          )
+  );
+});
+
+
+</script>
+</body>
+</html>

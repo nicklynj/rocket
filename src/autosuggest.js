@@ -68,6 +68,30 @@ rocket.AutoSuggest.prototype.query_;
 
 
 /**
+@return {rocket.Elements}
+*/
+rocket.AutoSuggest.prototype.getContainer = function() {
+  return this.container_;
+};
+
+
+/**
+@return {rocket.Elements}
+*/
+rocket.AutoSuggest.prototype.getTable = function() {
+  return this.table_;
+};
+
+
+/**
+@return {rocket.Elements}
+*/
+rocket.AutoSuggest.prototype.getTBody = function() {
+  return this.tbody_;
+};
+
+
+/**
 Override.
 */
 rocket.AutoSuggest.prototype.showInternal = function() {
@@ -180,6 +204,8 @@ rocket.AutoSuggest.prototype.draw_results_ = function() {
   this.table_.appendChild(this.tbody_);
 
   this.scroller_.innerHTML('').appendChild(this.table_);
+
+  this.dispatchEvent('drawResults');
 
 };
 
@@ -308,12 +334,6 @@ rocket.AutoSuggest.prototype.setResult = function(result) {
 
   this.getInputElement().value(result[0].replace(/<[^>]+>/g, ''));
 
-  if (new rocket.Elements([document.body]).contains(this.getInputElement())) {
-    this.getInputElement()
-        .setSelectionRange(0, result[0].length)
-        .focus();
-  }
-
 };
 
 
@@ -342,6 +362,14 @@ rocket.AutoSuggest.prototype.enterInternal = function(opt_result) {
   if (result) {
 
     this.setResult(result);
+
+    if (new rocket.Elements([document.body]).contains(this.getInputElement())) {
+      this.getInputElement()
+          .setSelectionRange(0, result[0].length)
+          .focus();
+    }
+
+    this.dispatchEvent('select');
 
   }
 
