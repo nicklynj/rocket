@@ -161,38 +161,36 @@ ManualSelect
 @extends {rocket.ManualSuggest}
 */
 rocket.ManualSelect = function() {
-
-  this.addEventListener('show', /** @this {rocket.AutoSelect} */ (function() {
-
-    if (this.getResult()) {
       
-      var self = this;
-      var fake = function(){
-        self.getInputElement().value('');
-        self.change();
-        self.getInputElement().value(self.getResult()[0]).setSelectionRange(0, self.getResult()[0].length);
-      };
-      
-      fake();
-      setTimeout(fake, 0);
-      
+  var self = this;
+  var fake_value = function(){
+    if (self.getResult()) {
+      self.getInputElement().value('');
+      self.change();
+      self.getInputElement().value(self.getResult()[0]);
     }
+  };
+  var fake_select = function(){
+    if (self.getResult()) {
+      self.getInputElement().setSelectionRange(0, self.getResult()[0].length);
+    }
+  };
+  
+  this.addEventListener('show', function() {
+    setTimeout(fake_value, 0);
+    setTimeout(fake_select, 0);
+  });
 
-  }));
+  this.addEventListener('enter', function() {
+    setTimeout(fake_select, 0);
+  });
 
-  this.addEventListener('hide', /** @this {rocket.AutoSelect} */ (function() {
-
+  this.addEventListener('hide', function() {
     if (this.getResult()) {
       this.getInputElement().value(this.getResult()[0]);
     }
-    
-  }));
+  });
 
 };
 rocket.inherits(rocket.ManualSelect, rocket.AutoSuggest);
 
-// rocket.ManualSelect.prototype.change = function() {
-  // if (!this.getResult() || this.getInput().value() !== this.getResult()[0]) {
-    // rocket.AutoSuggest.prototype.change.apply(this, arguments);
-  // }
-// };

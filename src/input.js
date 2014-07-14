@@ -140,6 +140,7 @@ rocket.Input.prototype.decorateInternal = function(input) {
 
             if (
                 (e.which !== rocket.KEY.enter) &&
+                (e.which !== rocket.KEY.tab) &&
                 (e.which !== rocket.KEY.shift)
             ) {
 
@@ -259,7 +260,11 @@ rocket.Input.prototype.hide = function() {
 @final
 */
 rocket.Input.prototype.enter = function() {
+
   this.enterInternal();
+
+  this.dispatchEvent('enter');
+
 };
 
 
