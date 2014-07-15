@@ -48,6 +48,13 @@ rocket.Component.prototype.component_element_created_ = false;
 
 
 /**
+@private
+@type {boolean}
+*/
+rocket.Component.prototype.component_element_referenced_ = false;
+
+
+/**
 Returns true if this component has been rendered.
 
 @return {boolean}
@@ -103,7 +110,10 @@ by calling createElementInternal.
 */
 rocket.Component.prototype.createElement = function() {
 
-  if (!this.component_element_created_) {
+  if (
+      (!this.component_element_created_) &&
+      (!this.component_element_referenced_)
+  ) {
 
     this.component_element_created_ = true;
 
@@ -125,6 +135,13 @@ Decorate the given HTMLElement by calling decorateInternal.
 rocket.Component.prototype.decorate = function(element) {
 
   if (!this.component_decorated_) {
+
+    if (!this.component_element_created_) {
+
+      this.component_element_referenced_ = true;
+      this.component_element = element;
+
+    }
 
     this.decorateInternal(element);
 
