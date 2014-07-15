@@ -139,7 +139,7 @@ rocket.Component.prototype.decorate = function(element) {
     if (!this.component_element_created_) {
 
       this.component_element_referenced_ = true;
-      this.component_element = element;
+      this.component_element_ = element;
 
     }
 
