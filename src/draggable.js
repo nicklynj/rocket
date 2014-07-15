@@ -75,7 +75,7 @@ rocket.Draggable.prototype.fixY_ = false;
 @private
 @type {boolean}
 */
-rocket.Draggable.prototype.fill_ = true;
+rocket.Draggable.prototype.fill_ = false;
 
 
 /**
@@ -102,7 +102,7 @@ rocket.Draggable.prototype.bounds_;
 /**
 Prevent the Element from being moved on the horizontal x axis.
 
-@param {boolean} fix
+@param {boolean} fix Whether to fix dragging to the x axis.
 */
 rocket.Draggable.prototype.setFixX = function(fix) {
 
@@ -114,7 +114,7 @@ rocket.Draggable.prototype.setFixX = function(fix) {
 /**
 Prevent the Element from being moved on the horizontal y axis.
 
-@param {boolean} fix
+@param {boolean} fix Whether to fix dragging to the y axis.
 */
 rocket.Draggable.prototype.setFixY = function(fix) {
 
@@ -127,9 +127,9 @@ rocket.Draggable.prototype.setFixY = function(fix) {
 Fill the empty space created by appending the draggable Element to a container
 with its position set to absolute.
 
-Defaults to true.
+Defaults to false.
 
-@param {boolean} fill
+@param {boolean} fill Whether to fill the empty space with a place holder.
 */
 rocket.Draggable.prototype.setFill = function(fill) {
 
@@ -144,7 +144,7 @@ dragging is initiated.
 
 Defaults to false.
 
-@param {boolean} z_index
+@param {boolean} z_index Whether to use zIndex.
 */
 rocket.Draggable.prototype.setZIndex = function(z_index) {
 
@@ -159,6 +159,7 @@ Whenever a Draggable is dragged, append it to the end of its parent container.
 Defaults to false.
 
 @param {boolean} append_child
+  Whether to appendChild the HTMLElement to its parent when it's moved.
 */
 rocket.Draggable.prototype.setAppendChild = function(append_child) {
 
@@ -197,7 +198,7 @@ rocket.Draggable.prototype.mouse_up_handler_;
 /**
 Overridden method from the Input helper class.
 
-@param {rocket.Elements} element
+@param {rocket.Elements} element The draggable HTMLElement.
 */
 rocket.Draggable.prototype.decorateInternal = function(element) {
 
@@ -243,6 +244,8 @@ rocket.Draggable.prototype.decorateInternal = function(element) {
             self.mouse_up_handler_
         );
 
+    self.dispatchEvent('dragStart');
+
   });
 
   var mouse_move_handler = /** @param {Event} e */ (function(e) {
@@ -282,12 +285,16 @@ rocket.Draggable.prototype.decorateInternal = function(element) {
   });
 
   this.mouse_up_handler_ = function() {
+
     doc
       .removeEventListener(['mousemove', 'touchmove'], mouse_move_handler)
       .removeEventListener(
             ['mouseup', 'touchend'],
             self.mouse_up_handler_
         );
+
+    self.dispatchEvent('dragEnd');
+
   };
 
   var rect = element.getBoundingClientRect();
