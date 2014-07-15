@@ -2,7 +2,10 @@
 
 
 /**
-InfiniScroll.
+InfiniScroll is used to dynamically draw only visible rows in an
+HTMLTableElement the appears to contain thousands of rows.
+
+The number of rows must be known when the InfiniScroll is rendered.
 
 @param {number} length
 @constructor
