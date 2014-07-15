@@ -6,19 +6,18 @@ Returns an object with a key and value attribute.
 @param {string} key The key.
 @param {*} value The value.
 @return {Object.<string, *>} The object.
-@example
-// this resolves a three line issue with javascript
 
-// given a variable to be used as a key
+@test {true} Two equivalent objects.
 var key = 'foo';
+var val = 'bar';
 
-// without rocket.object
-var bar = {};
-bar[key] = 'foo';
-do_something_with(bar);
+var foo = {};
+foo[key] = val;
 
-// transforms instead into
-do_something_with(rocket.object(key, 'foo'));
+var bar = rocket.object(key, val);
+
+rocket.equal(foo, bar);
+
 */
 rocket.object = function(key, value) {
   var obj = {};
