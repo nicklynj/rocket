@@ -10,23 +10,63 @@ This is not a full stack based parser/interpreter.  It cannot check for errors.
 
 There is a minor (will not fix) known issue with two division operators
 appearing on the same line being incorrectly interpreted as a
-regular expression.
+regular expression. e.g. "var foo = 5 / 5 / 5;"
 
 @param {string} string String of JavaScript code.
 @return {Array.<{type: string, value: string}>} The interpreted JavaScript.
-@test {true} Lexicographically analyze a string.
-rocket.equal(
-    rocket.lexeme("var foo = 'bar'"),
-    [
-        {"type":"word","value":"var"},
-        {"type":"whitespace","value":" "},
-        {"type":"identifier","value":"foo"},
-        {"type":"whitespace","value":" "},
-        {"type":"operator","value":"="},
-        {"type":"whitespace","value":" "},
-        {"type":"string","value":"'bar'"}
-    ]
-);
+
+@test {rocket.lexeme("var foo = 'bar';")} Lexicographically analyze a string.
+[
+    {"type":"word","value":"var"},
+    {"type":"whitespace","value":" "},
+    {"type":"identifier","value":"foo"},
+    {"type":"whitespace","value":" "},
+    {"type":"operator","value":"="},
+    {"type":"whitespace","value":" "},
+    {"type":"string","value":"'bar'"},
+    {"type":"operator","value":";"}
+]
+
+@test {rocket.lexeme("var foo = 5;")} Variable assignment with semicolon.
+[
+    {"type":"word","value":"var"},
+    {"type":"whitespace","value":" "},
+    {"type":"identifier","value":"foo"},
+    {"type":"whitespace","value":" "},
+    {"type":"operator","value":"="},
+    {"type":"whitespace","value":" "},
+    {"type":"number","value":"5"},
+    {"type":"operator","value":";"}
+]
+
+@test {rocket.lexeme("var foo = 5")} Variable assignment without semicolon.
+[
+    {"type":"word","value":"var"},
+    {"type":"whitespace","value":" "},
+    {"type":"identifier","value":"foo"},
+    {"type":"whitespace","value":" "},
+    {"type":"operator","value":"="},
+    {"type":"whitespace","value":" "},
+    {"type":"number","value":"5"}
+]
+
+@test {rocket.lexeme("var foo = 5 / 5 / 5;")}
+  Multiple division operator on a single line.
+[
+    {"type":"word","value":"var"},
+    {"type":"whitespace","value":" "},
+    {"type":"identifier","value":"foo"},
+    {"type":"whitespace","value":" "},
+    {"type":"operator","value":"="},
+    {"type":"whitespace","value":" "},
+    {"type":"number","value":"5"},
+    {"type":"whitespace","value":" "},
+    {"type":"regexp","value":"/ 5 /"},
+    {"type":"whitespace","value":" "},
+    {"type":"number","value":"5"},
+    {"type":"operator","value":";"},
+]
+
 */
 rocket.lexeme = function(string) {
 
@@ -120,29 +160,24 @@ rocket.lexeme = function(string) {
 
       do {
         character = string.charAt(position++);
-      } while (position < len &&
+      } while (
           (character >= '0' && character <= '9' ||
           character === '.' || character === 'x' || character === 'e'));
 
       type = 'number';
 
-      if (position !== len) {
-        --position;
-      }
+      --position;
 
     } else {
 
       do {
         character = string.charAt(position++);
-      } while (position < len &&
-          (character === ' ' ||
-          character === '\t' || character === '\r' || character === '\n'));
+      } while (character === ' ' ||
+          character === '\t' || character === '\r' || character === '\n');
 
       type = 'whitespace';
 
-      if (position !== len) {
-        --position;
-      }
+      --position;
 
     }
 

@@ -14,6 +14,22 @@ Converts a given JSON string into an Object.
 
 @param {string} str The String.
 @return {*} The Object.
+
+@test {{}} An empty Object.
+rocket.JSON.parse("{}");
+
+@test {true} true.
+rocket.JSON.parse("true");
+
+@test {"foo"} The string "foo".
+rocket.JSON.parse('"foo"');
+
+@test {[1,"false",false]} An Array.
+rocket.JSON.parse('[1,"false",false]');
+
+@test {{"x":5}} An Object.
+rocket.JSON.parse('{"x": 5}');
+
 */
 rocket.JSON.parse = function(str) {
 
@@ -110,6 +126,22 @@ Converts an object to a JSON string.
 
 @param {*} object The object.
 @return {(string|undefined)} The JSON string.
+
+@test {"{}"} An empty Object.
+rocket.JSON.stringify({});
+
+@test {"true"} true.
+rocket.JSON.stringify(true);
+
+@test {'"foo"'} The string "foo".
+rocket.JSON.stringify("foo");
+
+@test {'[1,"false",false]'} An Array.
+rocket.JSON.stringify([1, "false", false]);
+
+@test {'{"x":5}'} An Object.
+rocket.JSON.stringify({"x": 5});
+
 */
 rocket.JSON.stringify = function(object) {
 

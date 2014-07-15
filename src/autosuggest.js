@@ -279,6 +279,9 @@ rocket.AutoSuggest.prototype.setQuery = function(query) {
 /**
 Create and set a query function based upon an Array of data.
 
+Data is an Array of Arrays that are rows.  Each row is an integer indexed
+Array of columns.
+
 The query function will include the row in the call to setResults
 if any integer key contains the given string.
 

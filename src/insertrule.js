@@ -1,11 +1,26 @@
 
 
 /**
-Adds a class to this document.
+Adds a CSSStyleRule to this document.
 
 @param {string} rule The rule.
-@example
-$.insertRule('body {padding: 10px}');
+@test {20} Check the affects of a CSSStyleRule on an inserted element.
+
+var random = rocket.random();
+
+rocket.insertRule('#foo' + random + ' {padding: 10px}');
+
+var foo = rocket.createElement('div');
+foo.setAttribute({'id': 'foo' + random});
+
+rocket.$('body').appendChild(foo);
+
+var rect = foo.getBoundingClientRect();
+
+rocket.$('body').removeChild(foo);
+
+rect.height;
+
 */
 rocket.insertRule = function(rule) {
 

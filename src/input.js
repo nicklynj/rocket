@@ -23,7 +23,10 @@ rocket.Input.prototype.input_displayed_ = false;
 
 
 /**
-@return {boolean}
+Returns whether this HTMLInputElement currently has focus; whether the child
+class should currently have its helper functionality displayed.
+
+@return {boolean} Whether its displayed.
 */
 rocket.Input.prototype.getInputDisplayed = function() {
   return this.input_displayed_;
@@ -31,7 +34,9 @@ rocket.Input.prototype.getInputDisplayed = function() {
 
 
 /**
-@return {rocket.Elements}
+Returns the HTMLInputElement represented.
+
+@return {rocket.Elements} A rocket.Elements containing the HTMLInputElement.
 */
 rocket.Input.prototype.getInputElement = function() {
   return this.getComponentElement();
@@ -53,7 +58,9 @@ rocket.Input.prototype.input_value_;
 
 
 /**
-@return {rocket.Elements}
+Overridden method from the Component helper class.
+
+@return {rocket.Elements} A rocket.Elements containing the HTMLInputElement.
 */
 rocket.Input.prototype.createElementInternal = function() {
   return rocket.createElement('input');
@@ -97,9 +104,10 @@ rocket.Input.prototype.input_remove_document_listener_ = function() {
 
 
 /**
-Overridden method from the Input helper class.
+Overridden method from the Component helper class.
 
 @param {rocket.Elements} input
+  A rocket.Elements containing the HTMLInputElement.
 */
 rocket.Input.prototype.decorateInternal = function(input) {
 
@@ -196,7 +204,7 @@ rocket.Input.prototype.decorateInternal = function(input) {
 
 
 /**
-Overridden method from the Input helper class.
+Overridden method from the Component helper class.
 */
 rocket.Input.prototype.disposeInternal = function() {
 

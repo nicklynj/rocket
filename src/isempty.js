@@ -7,18 +7,43 @@ Returns whether the given Object does not contain any properties.
 
 @param {(Object|null|undefined)} obj The object.
 @return {boolean} Whether the given Object is empty.
-@example
+
+@test {true} An empty Array.
 rocket.isEmpty([]);
-// returns
-true;
 
+@test {true} An empty Object.
 rocket.isEmpty({});
-// returns
-true;
 
+@test {false} A non empty Array.
+rocket.isEmpty(['foo']);
+
+@test {false} A non empty Object.
 rocket.isEmpty({'foo': 'bar'});
-// returns
-false;
+
+@test {false} A non empty Object.
+rocket.isEmpty({'foo': 'bar'});
+
+@test {true} No arguments.
+rocket.isEmpty();
+
+@test {true} null.
+rocket.isEmpty(null);
+
+@test {true} undefined.
+rocket.isEmpty(undefined);
+
+@test {true} false.
+rocket.isEmpty(false);
+
+@test {true} true.
+rocket.isEmpty(true);
+
+@test {false} A string.
+rocket.isEmpty("foo");
+
+@test {true} An empty string.
+rocket.isEmpty("");
+
 */
 rocket.isEmpty = function(obj) {
 

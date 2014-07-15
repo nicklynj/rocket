@@ -3,9 +3,9 @@
 
 /**
 InfiniScroll is used to dynamically draw only visible rows in an
-HTMLTableElement the appears to contain thousands of rows.
+HTMLTableElement the appears to contain many (thousands of) rows.
 
-The number of rows must be known when the InfiniScroll is rendered.
+The number of rows must be known when the InfiniScroll is instantiated.
 
 @param {number} length
 @constructor
@@ -48,10 +48,12 @@ rocket.InfiniScroll.prototype.scroll_top_;
 
 
 /**
-Requests twice the viewable area of results
-to prevent seeing empty rows when scrolling.
+Requests twice the visible area of HTMLTableRowElement to help prevent the user
+from viewing emptyness.
 
 Defaults to false.
+
+Requests twice as many results in the direction which the user is scrolling.
 
 @param {boolean} pad_results
 */
@@ -63,7 +65,9 @@ rocket.InfiniScroll.prototype.setPadResults = function(pad_results) {
 
 
 /**
-Set or get the height of the scrollable container.
+Set the height of the scrollable HTMLDivElement container.
+
+Defaults to 300 pixels.
 
 @param {number} height
 */
@@ -75,8 +79,15 @@ rocket.InfiniScroll.prototype.setHeight = function(height) {
 
 
 /**
-The given query function is called with two parameters: index and length.
-The given query function then must call InfiniScroll.setResults(data).
+The given query function is called with two parameters: index and length; the
+query function then must call setResults(data).
+
+The index is the zero based position of the first result requested.
+
+The length is the number of results requested.
+
+Data is an Array of rows, where each row is an Array of columns, where each
+column is a String.
 
 @param {function(number, number)} query
 */
@@ -88,7 +99,7 @@ rocket.InfiniScroll.prototype.setQuery = function(query) {
 
 
 /**
-Creates and assigns an InfiniScroll.query() function given a set of data.
+Create and set a query function based upon an Array of data.
 
 Data is an Array of rows, where each row is an Array of columns, where each
 column is a String.
@@ -158,7 +169,7 @@ rocket.InfiniScroll.prototype.query_;
 
 
 /**
-Decorate.
+Overridden method from the Input helper class.
 
 @param {rocket.Elements} element
 */
@@ -295,7 +306,7 @@ rocket.InfiniScroll.prototype.setResults = function(data) {
 
 
 /**
-Dispose.
+Overridden method from the Component helper class.
 */
 rocket.InfiniScroll.prototype.disposeInternal = function() {
 
