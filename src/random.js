@@ -10,15 +10,31 @@ When called with no parameters, returns a random number between 0 and 2^31 - 1.
   zero is assumed for the min and this is used as the max.
 @param {number=} opt_max The maximum.
 @return {number} The random number.
-@example
-rocket.random(1); // returns zero or one
-rocket.random(6); // returns zero thru six
 
-// the following all produce the same result
-// a random number between 0 and 2147483647
-rocket.random();
-rocket.random(2147483647);
-rocket.random(0, 2147483647);
+@test {true} No parameters; greater than or equal to zero.
+(rocket.random() >= 0);
+
+@test {true} No parameters; less than 2^31.
+(rocket.random() < 2147483647);
+
+@test {true} One parameter; one.
+var rand = rocket.random(1);
+((rand === 0) || (rand === 1))
+
+@test {true} One parameter; five.
+var rand = rocket.random(5);
+(rocket.indexOf([0, 1, 2, 3, 4, 5], rand) !== -1);
+
+@test {0} One parameter; zero.
+rocket.random(0);
+
+@test {true} Two parameters; zero, five.
+var rand = rocket.random(0, 5);
+(rocket.indexOf([0, 1, 2, 3, 4, 5], rand) !== -1);
+
+@test {true} Two parameters; one, six.
+var rand = rocket.random(1, 6);
+(rocket.indexOf([1, 2, 3, 4, 5, 6], rand) !== -1);
 */
 rocket.random = function(opt_min_max, opt_max) {
 

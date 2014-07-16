@@ -56,7 +56,7 @@ rocket.padLeft = function(str, len, opt_pad) {
 
   var length = len - str.length;
 
-  return length > 0 ?
+  return (length > 0) ?
       new Array(length + 1).join(opt_pad || ' ').substr(0, length) + str :
       str;
 

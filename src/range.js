@@ -1,7 +1,7 @@
 
 
 /**
-Creates an Array of numbers.
+Creates an Array containing a range of numbers.
 
 @param {number} start_or_count
   The first number in the range or if this is the only given parameter, zero
@@ -9,13 +9,28 @@ Creates an Array of numbers.
 @param {number=} opt_stop The last number in the range.
 @param {number=} opt_step The step of the range.
 @return {Array.<number>} The Array of numbers.
-@example
-// the following all produce the same result
-rocket.range(10);
-rocket.range(0,9);
-rocket.range(0,9,1);
-// returns
-[0,1,2,3,4,5,6,7,8,9]
+
+@test {[0, 1, 2]} A range of numbers from zero to two.
+rocket.range(3);
+
+@test {[0, 1, 2]} A range of numbers from zero to two.
+rocket.range(0, 2);
+
+@test {[1, 2, 3]} A range of numbers from one to three.
+rocket.range(1, 3);
+
+@test {[0, 1, 2, 3]} A range of numbers from zero to three.
+rocket.range(0, 3, 1);
+
+@test {[1, 2, 3]} A range of numbers from one to three.
+rocket.range(1, 3, 1);
+
+@test {[0, 2]} A range of numbers from zero to three with a step of two.
+rocket.range(0, 3, 2);
+
+@test {[1, 3]} A range of numbers from one to three with a step of two.
+rocket.range(1, 3, 2);
+
 */
 rocket.range = function(start_or_count, opt_stop, opt_step) {
 

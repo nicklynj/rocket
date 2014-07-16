@@ -5,6 +5,10 @@ Parses a date from a given string.
 
 @param {string} str The string to be parsed.
 @return {?Date} The parsed Date or null on error.
+
+@test {new Date(1973, 1, 1)} Full date.
+rocket.strToDate('2/1/1973');
+
 */
 rocket.strToDate = function(str) {
 
@@ -12,7 +16,7 @@ rocket.strToDate = function(str) {
   var month;
   var date;
 
-  var now;
+  var now = new Date();
 
   var len = str.length;
   var segments;
@@ -69,7 +73,6 @@ rocket.strToDate = function(str) {
 
   if (!year) {
 
-    now = new Date();
     year = now.getFullYear();
 
   } else if (year < 100) {
@@ -83,10 +86,6 @@ rocket.strToDate = function(str) {
   }
 
   if (!month) {
-
-    if (!now) {
-      now = new Date();
-    }
 
     month = now.getMonth() + 1;
 

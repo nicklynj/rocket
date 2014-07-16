@@ -74,6 +74,15 @@ rocket.equal(document, document.body);
 @test {true} HTMLBodyElement.
 rocket.equal(document.body, document.body);
 
+@test {true} Same Date.
+var date = new Date();
+rocket.equal(date, date);
+
+@test {false} Different Date.
+var foo = new Date('1900-01-01');
+var bar = new Date('2000-01-0');
+rocket.equal(foo, bar);
+
 */
 rocket.equal = function(a, b) {
 
@@ -112,6 +121,10 @@ rocket.equal.equal_ = function(a, b, as, bs) {
     return a === b;
 
   } else {
+
+    if (('' + a) !== ('' + b)) {
+      return false;
+    }
 
     var a_is_array = rocket.isArray(a);
     var b_is_array = rocket.isArray(b);
