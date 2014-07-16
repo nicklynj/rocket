@@ -190,6 +190,13 @@ rocket.Draggable.prototype.filler_;
 
 /**
 @private
+@type {rocket.Elements}
+*/
+rocket.Draggable.prototype.element_;
+
+
+/**
+@private
 @type {function()}
 */
 rocket.Draggable.prototype.mouse_up_handler_;
@@ -313,22 +320,18 @@ rocket.Draggable.prototype.decorateInternal = function(element) {
 
   var parent = element.parentNode();
 
-  if (parent.length) {
+  parent.insertBefore(this.container_, element);
 
-    parent.insertBefore(this.container_, element);
+  if (this.fill_) {
 
-    if (this.fill_) {
+    this.filler_ =
+        /** @type {rocket.Elements} */ (
+        rocket.createElement('div').style({
+          'width': rect.width,
+          'height': rect.height
+        }));
 
-      this.filler_ =
-          /** @type {rocket.Elements} */ (
-          rocket.createElement('div').style({
-            'width': rect.width,
-            'height': rect.height
-          }));
-
-      parent.insertBefore(this.filler_, element);
-
-    }
+    parent.insertBefore(this.filler_, element);
 
   }
 
@@ -346,9 +349,11 @@ rocket.Draggable.prototype.disposeInternal = function() {
 
   if (this.container_) {
 
+    var parent = this.container_.parentNode();
+
     if (!this.getComponentRendered()) {
-      this.container_.parentNode().insertBefore(
-          this.getComponentElement(),
+      parent.insertBefore(
+          this.element_,
           this.container_
       );
     }
@@ -357,10 +362,10 @@ rocket.Draggable.prototype.disposeInternal = function() {
 
     this.mouse_up_handler_();
 
-    this.container_.parentNode().removeChild(this.container_);
+    parent.removeChild(this.container_);
 
     if (this.fill_) {
-      this.filler_.parentNode().removeChild(this.filler_);
+      parent.removeChild(this.filler_);
     }
 
     this.removeEventListener();
