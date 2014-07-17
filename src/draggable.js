@@ -209,6 +209,13 @@ rocket.Draggable.prototype.mouse_up_handler_;
 @private
 @type {ClientRect}
 */
+rocket.Draggable.prototype.offset_rect_;
+
+
+/**
+@private
+@type {ClientRect}
+*/
 rocket.Draggable.prototype.dragging_rect_;
 
 
@@ -246,7 +253,7 @@ rocket.Draggable.prototype.decorateInternal = function(element) {
 
   this.first_mouse_down_handler_ = /** @param {Event} e */ (function(e) {
 
-    var rect = element.getOffset();
+    var rect = element.getBoundingClientRect();
 
     self.container_ =
         rocket.createElement('div')
@@ -293,34 +300,39 @@ rocket.Draggable.prototype.decorateInternal = function(element) {
 
   this.mouse_down_handler_ = /** @param {Event} e */ (function(e) {
 
-    self.dragging_rect_ = self.container_.getOffset();
-    self.bounding_rect_ =
-        (self.bounds_ || rocket.$('html')).getOffset();
+    if (e.target === self.element_[0]) {
 
-    self.mouse_x_ = e.pageX;
-    self.mouse_y_ = e.pageY;
+      self.offset_rect_ = self.container_.getOffset();
+      self.dragging_rect_ = self.element_.getBoundingClientRect();
+      self.bounding_rect_ =
+          (self.bounds_ || rocket.$('html')).getBoundingClientRect();
 
-    if (self.z_index_) {
-      self.container_.style({
-        'zIndex': '' + (++rocket.Draggable.z_index_)
-      });
+      self.mouse_x_ = e.pageX;
+      self.mouse_y_ = e.pageY;
+
+      if (self.z_index_) {
+        self.container_.style({
+          'zIndex': '' + (++rocket.Draggable.z_index_)
+        });
+      }
+
+      if (self.append_child_) {
+
+        self.container_.parentNode().appendChild(self.container_);
+        self.mouse_move_handler_(e);
+
+      }
+
+      new rocket.Elements([document])
+        .addEventListener(['mousemove', 'touchmove'], self.mouse_move_handler_)
+        .addEventListener(
+              ['mouseup', 'touchend'],
+              self.mouse_up_handler_
+          );
+
+      self.dispatchEvent('dragstart');
+
     }
-
-    if (self.append_child_) {
-
-      self.container_.parentNode().appendChild(self.container_);
-      self.mouse_move_handler_(e);
-
-    }
-
-    new rocket.Elements([document])
-      .addEventListener(['mousemove', 'touchmove'], self.mouse_move_handler_)
-      .addEventListener(
-            ['mouseup', 'touchend'],
-            self.mouse_up_handler_
-        );
-
-    self.dispatchEvent('dragstart');
 
   });
 
@@ -332,28 +344,28 @@ rocket.Draggable.prototype.decorateInternal = function(element) {
 
     if (!self.fixX_) {
 
-      var left = self.dragging_rect_.left + e.pageX - self.mouse_x_;
+      var left = e.pageX - self.mouse_x_;
 
       self.container_.style({
         'left': rocket.clamp(
             left,
-            self.bounding_rect_.left,
-            self.bounding_rect_.width - self.dragging_rect_.width
-        )
+            self.bounding_rect_.left - self.dragging_rect_.left,
+            self.bounding_rect_.right - self.dragging_rect_.right
+        ) + self.offset_rect_.left + 1
       });
 
     }
 
     if (!self.fixY_) {
 
-      var top = self.dragging_rect_.top + e.pageY - self.mouse_y_;
+      var top = e.pageY - self.mouse_y_;
 
       self.container_.style({
         'top': rocket.clamp(
             top,
-            self.bounding_rect_.top,
-            self.bounding_rect_.height - self.dragging_rect_.height
-        )
+            self.bounding_rect_.top - self.dragging_rect_.top,
+            self.bounding_rect_.bottom - self.dragging_rect_.bottom
+        ) + self.offset_rect_.top + 1
       });
 
     }
