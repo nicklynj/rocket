@@ -41,6 +41,20 @@ rocket.Draggable.z_index_ = 0;
 
 /**
 @private
+@type {number}
+*/
+rocket.Draggable.prototype.x_;
+
+
+/**
+@private
+@type {number}
+*/
+rocket.Draggable.prototype.y_;
+
+
+/**
+@private
 @type {boolean}
 */
 rocket.Draggable.prototype.fixX_ = false;
@@ -101,6 +115,38 @@ Prevent the Element from being moved on the horizontal y axis.
 rocket.Draggable.prototype.setFixY = function(fix) {
 
   this.fixY_ = fix;
+
+};
+
+
+/**
+Set the default or current x or left position of the HTMLDivElement container.
+
+@param {number} x The x offset in pixels.
+*/
+rocket.Draggable.prototype.setX = function(x) {
+
+  this.x_ = x;
+
+  if (this.container_) {
+    this.container_.style({'left': this.x_});
+  }
+
+};
+
+
+/**
+Set the default or current y or top position of the HTMLDivElement container.
+
+@param {number} y The y offset in pixels.
+*/
+rocket.Draggable.prototype.setY = function(y) {
+
+  this.y_ = y;
+
+  if (this.container_) {
+    this.container_.style({'top': this.y_});
+  }
 
 };
 
@@ -261,7 +307,9 @@ rocket.Draggable.prototype.decorateInternal = function(element) {
         .style({
           'position': 'absolute',
           'width': rect.width,
-          'height': rect.height
+          'height': rect.height,
+          'left': (self.x_ === undefined) ? '' : self.x_,
+          'top': (self.y_ === undefined) ? '' : self.y_
         })
         .addEventListener(
             ['mousedown', 'touchstart'],
