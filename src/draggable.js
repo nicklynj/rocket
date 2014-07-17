@@ -246,7 +246,7 @@ rocket.Draggable.prototype.decorateInternal = function(element) {
 
   this.first_mouse_down_handler_ = /** @param {Event} e */ (function(e) {
 
-    var rect = element.getBoundingClientRect();
+    var rect = element.getOffset();
 
     self.container_ =
         rocket.createElement('div')
@@ -293,9 +293,9 @@ rocket.Draggable.prototype.decorateInternal = function(element) {
 
   this.mouse_down_handler_ = /** @param {Event} e */ (function(e) {
 
-    self.dragging_rect_ = self.container_.getBoundingClientRect();
+    self.dragging_rect_ = self.container_.getOffset();
     self.bounding_rect_ =
-        (self.bounds_ || rocket.$('html')).getBoundingClientRect();
+        (self.bounds_ || rocket.$('html')).getOffset();
 
     self.mouse_x_ = e.pageX;
     self.mouse_y_ = e.pageY;

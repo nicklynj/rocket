@@ -1040,6 +1040,45 @@ rocket.Elements.prototype.getBoundingClientRect = function(opt_no_offset) {
 
 
 /**
+Get current Element offset attributes.
+@return {ClientRect} The offset attributes of the Element.
+*/
+rocket.Elements.prototype.getOffset = function() {
+
+  if (this.length) {
+
+    var left = this.getAttribute('offsetLeft');
+    var top = this.getAttribute('offsetTop');
+    var height = this.getAttribute('offsetHeight');
+    var width = this.getAttribute('offsetWidth');
+    var parent = this.getAttribute('offsetParent');
+
+    return /** @type {ClientRect} */ ({
+      top: top,
+      right: left + width,
+      bottom: top + height,
+      left: left,
+      width: width,
+      height: height,
+      parent: parent
+    });
+
+  } else {
+    return /** @type {ClientRect} */ ({
+      top: NaN,
+      right: NaN,
+      bottom: NaN,
+      left: NaN,
+      width: NaN,
+      height: NaN,
+      parent: null
+    });
+  }
+
+};
+
+
+/**
 Checks to see if any of these elements have any of class_names.
 
 @param {(string|Array.<string>)} class_names The class names to check.
