@@ -58,6 +58,12 @@ rocket.ready(function(){
   (window.di = new rocket.DateInput()).render();
   (window.i = new rocket.DateInput()).render();
 
+  var container = $.createElement('div');
+  
+  
+  
+  
+  
   var d = $.createElement('div').innerHTML('draggable').style({
     'padding': 50,
     'width': 600,
@@ -69,7 +75,15 @@ rocket.ready(function(){
 
   (window.d = new rocket.Draggable()).decorate(d);
   window.d.setAppendChild(true);
-
+  window.d.setFill(true);
+  
+  container.appendChild(d);
+  
+  
+    
+  
+  
+  
   var d = $.createElement('div').innerHTML('draggable').style({
     'padding': 50,
     'width': 600,
@@ -81,7 +95,12 @@ rocket.ready(function(){
 
   (window.d = new rocket.Draggable()).decorate(d);
   window.d.setAppendChild(true);
-
+  window.d.setFill(true);
+  
+  container.appendChild(d);
+  
+ 
+ 
   var d = $.createElement('div').innerHTML('draggable').style({
     'padding': 50,
     'width': 600,
@@ -93,7 +112,17 @@ rocket.ready(function(){
 
   (window.d = new rocket.Draggable()).decorate(d);
   window.d.setAppendChild(true);
-
+  window.d.setFill(true);
+  
+  container.appendChild(d);
+ 
+ 
+ 
+ 
+ 
+  $('body').appendChild(container);
+  
+  
   var foo = [];
   for(var i = 0; i < 100; ++i){
     foo.push([''+$.random(1000000,1001000),''+i]);

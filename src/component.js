@@ -194,7 +194,7 @@ from its parent when disposed.
 */
 rocket.Component.prototype.dispose = function() {
 
-  if (this.component_element_created_ && !this.component_disposed_) {
+  if (this.component_decorated_ && !this.component_disposed_) {
 
     this.disposeInternal();
 
