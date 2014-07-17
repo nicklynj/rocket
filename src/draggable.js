@@ -341,6 +341,27 @@ rocket.Draggable.prototype.decorateInternal = function(element) {
 
 
 /**
+@private
+@type {boolean}
+*/
+rocket.Draggable.prototype.has_dragged_ = false;
+
+
+/**
+@private
+*/
+rocket.Draggable.prototype.first_drag_hanler_ = function() {
+
+  if (!this.has_dragged_) {
+
+
+
+  }
+
+};
+
+
+/**
 Overridden method from the Component helper class.
 
 if decorated, the moving Element will be returned to its original position.
