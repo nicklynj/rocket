@@ -222,7 +222,7 @@ rocket.AutoSuggest.prototype.draw_results_ = function() {
 
   this.scroller_.innerHTML('').appendChild(this.table_);
 
-  this.dispatchEvent('drawResults');
+  this.dispatchEvent('drawresults');
 
 };
 
