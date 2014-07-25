@@ -120,6 +120,16 @@ rocket.InfiniScroll.prototype.data = function(data) {
 
 
 /**
+Get the HTMLTableElement that contains the viewable portion of the results.
+
+@return {rocket.Elements} The HTMLTableElement.
+*/
+rocket.InfiniScroll.prototype.getTable = function() {
+  return this.table_;
+};
+
+
+/**
 @private
 @type {number}
 */
