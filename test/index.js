@@ -58,9 +58,9 @@ rocket.ready(function(){
   (window.di = new rocket.DateInput()).render();
   (window.i = new rocket.DateInput()).render();
 
-  var container = $.createElement('div');
-  
-  
+  var container = $.createElement('div').style({'position':'relative'});
+
+  $('body').appendChild(container);
   
   
   
@@ -76,13 +76,32 @@ rocket.ready(function(){
   (window.d = new rocket.Draggable()).decorate(d);
   window.d.setAppendChild(true);
   window.d.setFill(true);
-  
   container.appendChild(d);
-  
   
     
   
   
+  var d = $.createElement('div').innerHTML('draggable').style({
+    'padding': 50,
+    'width': 600,
+    'background-color': '#DDDDDD',
+    'border': '1px solid red'
+  });
+
+  $('body').appendChild(d);
+
+  (window.d = new rocket.Draggable()).decorate(d);
+  window.d.setAppendChild(true);
+  // window.d.setFill(true);
+  container.appendChild(d);
+  // window.d.setX(100);
+  // window.d.setY(100);
+  d.style({'left': 100, 'top': 100, 'position': 'absolute'});
+  
+  
+  
+  
+  
   
   var d = $.createElement('div').innerHTML('draggable').style({
     'padding': 50,
@@ -95,9 +114,11 @@ rocket.ready(function(){
 
   (window.d = new rocket.Draggable()).decorate(d);
   window.d.setAppendChild(true);
-  window.d.setFill(true);
-  
+  // window.d.setFill(true);
   container.appendChild(d);
+  window.d.setX(200);
+  window.d.setY(200);
+  
   
  
  
@@ -112,16 +133,15 @@ rocket.ready(function(){
 
   (window.d = new rocket.Draggable()).decorate(d);
   window.d.setAppendChild(true);
-  window.d.setFill(true);
-  
+  // window.d.setFill(true);
   container.appendChild(d);
- 
- 
- 
- 
- 
-  $('body').appendChild(container);
+  window.d.setX(300);
+  window.d.setY(300);
   
+ 
+ 
+ 
+ 
   
   var foo = [];
   for(var i = 0; i < 100; ++i){
