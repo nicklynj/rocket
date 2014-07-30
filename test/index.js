@@ -172,7 +172,8 @@ rocket.ready(function(){
   var len = 10000;
 
   var timeout;
-  var infini = new rocket.InfiniScroll(len);
+  var infini = new rocket.InfiniScroll();
+  infini.setLength(len);
   infini.setHeight(600);
   infini.setQuery(function(index, length){
     var rows = [];
