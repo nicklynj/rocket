@@ -9,7 +9,8 @@
 var length = rocket.$('body').appendChild(rocket.createElement('input').value(10000));
 
 rocket.$('body').appendChild(rocket.createElement('button').innerHTML('no padding, instant').addEventListener('click',function(){
-  var infini = new rocket.InfiniScroll(length.value());
+  var infini = new rocket.InfiniScroll();
+  infini.setLength(length.value());
   infini.setHeight(600);
   infini.setQuery(function(index, len){
     var results = [];
@@ -23,7 +24,8 @@ rocket.$('body').appendChild(rocket.createElement('button').innerHTML('no paddin
 
 rocket.$('body').appendChild(rocket.createElement('button').innerHTML('no padding, timeout').addEventListener('click',function(){
   var timeout;
-  var infini = new rocket.InfiniScroll(length.value());
+  var infini = new rocket.InfiniScroll();
+  infini.setLength(length.value());
   infini.setHeight(600);
   infini.setQuery(function(index, len){
     var results = [];
@@ -40,7 +42,8 @@ rocket.$('body').appendChild(rocket.createElement('button').innerHTML('no paddin
 
 rocket.$('body').appendChild(rocket.createElement('button').innerHTML('padding, timeout').addEventListener('click',function(){
   var timeout;
-  var infini = new rocket.InfiniScroll(length.value());
+  var infini = new rocket.InfiniScroll();
+  infini.setLength(length.value());
   infini.setHeight(600);
   infini.setPadResults(true);
   infini.setQuery(function(index, len){

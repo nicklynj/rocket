@@ -5,17 +5,10 @@
 InfiniScroll is used to dynamically draw only visible rows in an
 HTMLTableElement that appears to contain many (thousands of) rows.
 
-The number of rows must be known when the InfiniScroll is instantiated.
-
-@param {number} length
 @constructor
 @extends {rocket.Component}
 */
-rocket.InfiniScroll = function(length) {
-
-  this.length_ = length;
-
-};
+rocket.InfiniScroll = function() {};
 rocket.inherits(rocket.InfiniScroll, rocket.Component);
 
 
@@ -23,7 +16,7 @@ rocket.inherits(rocket.InfiniScroll, rocket.Component);
 @type {number}
 @private
 */
-rocket.InfiniScroll.prototype.height_ = 300;
+rocket.InfiniScroll.prototype.height_;
 
 
 /**
@@ -60,6 +53,7 @@ Requests twice as many results in the direction which the user is scrolling.
 rocket.InfiniScroll.prototype.setPadResults = function(pad_results) {
 
   this.pad_results_ = pad_results;
+  this.init_sizes_();
 
 };
 
@@ -67,13 +61,40 @@ rocket.InfiniScroll.prototype.setPadResults = function(pad_results) {
 /**
 Set the height of the scrollable HTMLDivElement container.
 
-Defaults to 300 pixels.
-
 @param {number} height
 */
 rocket.InfiniScroll.prototype.setHeight = function(height) {
 
   this.height_ = height;
+  this.init_sizes_();
+
+};
+
+
+/**
+Set the height of each HTMLTableRowElement.
+
+Defaults to twenty pixels.
+
+@param {number} row_height
+*/
+rocket.InfiniScroll.prototype.setRowHeight = function(row_height) {
+
+  this.row_height_ = row_height;
+  this.init_sizes_();
+
+};
+
+
+/**
+Set the maximum number of possible results or length.
+
+@param {number} length
+*/
+rocket.InfiniScroll.prototype.setLength = function(length) {
+
+  this.length_ = length;
+  this.init_sizes_();
 
 };
 
@@ -140,6 +161,20 @@ rocket.InfiniScroll.prototype.index_;
 @private
 @type {number}
 */
+rocket.InfiniScroll.prototype.index_length_;
+
+
+/**
+@private
+@type {number}
+*/
+rocket.InfiniScroll.prototype.length_;
+
+
+/**
+@private
+@type {number}
+*/
 rocket.InfiniScroll.prototype.query_length_;
 
 
@@ -185,30 +220,14 @@ Overridden method from the Input helper class.
 */
 rocket.InfiniScroll.prototype.decorateInternal = function(element) {
 
-  element.style({
-    'height': this.height_,
-    'overflow-y': 'scroll'
-  });
-
   this.container_ = rocket.createElement('div');
   this.padding_ = rocket.createElement('div');
-
-  this.container_.style({
-    'height': this.row_height_ * this.length_
-  });
-
-  this.query_length_ = Math.ceil(this.height_ / this.row_height_);
-
-  if (this.pad_results_) {
-    this.query_length_ *= 2;
-  }
 
   this.padding_.style({
     'height': 0
   });
 
   this.container_.appendChild(this.padding_);
-
   element.appendChild(this.container_);
 
   var self = this;
@@ -249,15 +268,20 @@ rocket.InfiniScroll.prototype.decorateInternal = function(element) {
       index = 0;
     }
 
-    if (index !== self.index_) {
+    diff = (index + self.query_length_) - self.length_;
+    var index_length = self.query_length_ - ((diff > 0) ? diff : 0);
+
+    if (
+        (index !== self.index_) ||
+        (index_length !== self.index_length_)
+    ) {
 
       self.index_ = index;
-
-      diff = (index + self.query_length_) - self.length_;
+      self.index_length_ = index_length;
 
       self.query_(
           index,
-          self.query_length_ - ((diff > 0) ? diff : 0)
+          index_length
       );
 
     }
@@ -266,7 +290,36 @@ rocket.InfiniScroll.prototype.decorateInternal = function(element) {
 
   element.addEventListener('scroll', this.element_scroller_);
 
-  element.dispatchEvent('scroll');
+  this.init_sizes_();
+
+};
+
+
+/**
+@private
+*/
+rocket.InfiniScroll.prototype.init_sizes_ = function() {
+
+  if (this.getComponentElement()) {
+
+    this.getComponentElement().style({
+      'height': this.height_,
+      'overflow-y': 'scroll'
+    });
+
+    this.container_.style({
+      'height': this.row_height_ * this.length_
+    });
+
+    this.query_length_ = Math.ceil(this.height_ / this.row_height_);
+
+    if (this.pad_results_) {
+      this.query_length_ *= 2;
+    }
+
+    this.getComponentElement().dispatchEvent('scroll');
+
+  }
 
 };
 
@@ -311,6 +364,8 @@ rocket.InfiniScroll.prototype.setResults = function(data) {
   this.padding_.style({
     'height': this.index_ * this.row_height_
   });
+
+  this.dispatchEvent('drawresults');
 
 };
 
