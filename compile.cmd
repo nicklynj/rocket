@@ -16,7 +16,7 @@ if exist build\rocket.development.js del build\rocket.development.js
 for /F "tokens=*" %%A in (build\manifest_lines) do type %%A >> build\rocket.development.js
 
 echo linting...
-c:\python\scripts\gjslint.exe --strict --time --custom_jsdoc_tags=namespace,example,name,ignore,version,memberof,test -r src
+gjslint.exe --strict --time --custom_jsdoc_tags=namespace,example,name,ignore,version,memberof,test -r src
 
 echo compiling...
 echo|set /p=java -jar C:\git\closure-compiler\build\compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --use_types_for_optimization --externs src\externs.js --js_output_file build\rocket.js > build\temp.bat
