@@ -5,4 +5,4 @@ Version number for this release.
 
 @const
 */
-rocket.version = 14.07;
+rocket.version = 14.08;
