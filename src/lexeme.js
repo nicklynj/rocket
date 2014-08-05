@@ -255,6 +255,7 @@ rocket.lexeme.words_ = {
   'in': 1,
   'instanceof': 1,
   'new': 1,
+  'null': 1,
   'return': 1,
   'switch': 1,
   'this': 1,
