@@ -336,41 +336,37 @@ rocket.Draggable.prototype.decorateInternal = function(element) {
 
   this.mouse_down_handler_ = /** @param {Event} e */ (function(e) {
 
-    if (e.target === self.element_[0]) {
+    e.preventDefault();
 
-      e.preventDefault();
+    self.offset_rect_ = self.container_.getOffset();
+    self.dragging_rect_ = self.element_.getBoundingClientRect();
+    self.bounding_rect_ =
+        (self.bounds_ || rocket.$('html')).getBoundingClientRect();
 
-      self.offset_rect_ = self.container_.getOffset();
-      self.dragging_rect_ = self.element_.getBoundingClientRect();
-      self.bounding_rect_ =
-          (self.bounds_ || rocket.$('html')).getBoundingClientRect();
+    self.mouse_x_ = e.pageX;
+    self.mouse_y_ = e.pageY;
 
-      self.mouse_x_ = e.pageX;
-      self.mouse_y_ = e.pageY;
+    if (self.z_index_) {
+      self.container_.style({
+        'zIndex': '' + (++rocket.Draggable.z_index_)
+      });
+    }
 
-      if (self.z_index_) {
-        self.container_.style({
-          'zIndex': '' + (++rocket.Draggable.z_index_)
-        });
-      }
+    if (self.append_child_) {
 
-      if (self.append_child_) {
-
-        self.container_.parentNode().appendChild(self.container_);
-        self.mouse_move_handler_(e);
-
-      }
-
-      new rocket.Elements([document])
-        .addEventListener(['mousemove', 'touchmove'], self.mouse_move_handler_)
-        .addEventListener(
-              ['mouseup', 'touchend'],
-              self.mouse_up_handler_
-          );
-
-      self.dispatchEvent('dragstart');
+      self.container_.parentNode().appendChild(self.container_);
+      self.mouse_move_handler_(e);
 
     }
+
+    new rocket.Elements([document])
+      .addEventListener(['mousemove', 'touchmove'], self.mouse_move_handler_)
+      .addEventListener(
+            ['mouseup', 'touchend'],
+            self.mouse_up_handler_
+        );
+
+    self.dispatchEvent('dragstart');
 
   });
 
