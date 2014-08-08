@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+<script src="../build/rocket.development.js"></script>
+<style>body,tbody,input {font-family: arial; font-size: 12px}</style>
+</head>
+<body style="height:600px">
+<label>Please enter a date: </label>
+<script>
+
+var date_input = new rocket.DateInput();
+
+var input_element = rocket.createElement('input');
+
+date_input.decorate(input_element);
+
+rocket.$('body').appendChild(input_element);
+
+</script>
+</body>
+</html>
