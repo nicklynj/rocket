@@ -96,17 +96,35 @@ rocket.DateInput.prototype.showInternal = function() {
       (function() {
 
         if (this.innerHTML === '&lt;&lt;') {
+
           --self.calendar_year_;
           self.draw_calendar_();
+
         } else if (this.innerHTML === '&lt;') {
-          --self.calendar_month_;
+
+          if (self.calendar_month_) {
+            --self.calendar_month_;
+          } else {
+            self.calendar_month_ = 11;
+            --self.calendar_year_;
+          }
           self.draw_calendar_();
+
         } else if (this.innerHTML === '&gt;&gt;') {
+
           ++self.calendar_year_;
           self.draw_calendar_();
+
         } else if (this.innerHTML === '&gt;') {
-          ++self.calendar_month_;
+
+          if (self.calendar_month_ < 11) {
+            ++self.calendar_month_;
+          } else {
+            self.calendar_month_ = 0;
+            ++self.calendar_year_;
+          }
           self.draw_calendar_();
+
         } else {
 
           var date = +this.innerHTML;
