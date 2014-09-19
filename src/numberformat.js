@@ -103,7 +103,7 @@ rocket.numberFormat =
   if (number_of_decimals >= 0) {
     number = number.toFixed(number_of_decimals);
   } else {
-    var rnd = Math.pow(10, number_of_decimals);
+    var rnd = Math.pow(10, Math.abs(number_of_decimals));
     number = Math.floor(number / rnd) * rnd;
   }
 
