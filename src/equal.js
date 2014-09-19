@@ -18,8 +18,12 @@ rocket.equal({'a': 'b', 'c': [0, 1]}, {'a': 'b', 'c': [0, 1]});
 @test {false} Objects without same properties.
 rocket.equal({'a': 'b'}, {'a': 'b', 'c': [0, 1]});
 
-@test {true} Equivalent HTMLDivElement.
-rocket.equal(document.createElement('div'), document.createElement('div'));
+@test {true} Equivalent HTMLDivElement (except in IE; uniqueID attribute).
+if (window.navigator.userAgent.indexOf('MSIE') === -1) {
+  rocket.equal(document.createElement('div'), document.createElement('div'));
+} else {
+  true;
+}
 
 @test {false} Equivalent HTMLDivElement but appended to another Element.
 var foo = document.createElement('div');
