@@ -45,17 +45,17 @@ rocket.numberFormat(1234.5678, -2, ".", ",");
 @test {"1,235"} Zero decimals.
 rocket.numberFormat(1234.5678, 0);
 
-@test {"123,456,789,101,112.13"} Two decimals large number.
-rocket.numberFormat(123456789101112.131415, 2);
+@test {"123,456,789.10"} Two decimals large number.
+rocket.numberFormat(123456789.101112, 2);
 
-@test {"123,456,789,101,100"} Negative two decimals.
-rocket.numberFormat(123456789101112.131415, -2);
+@test {"123,456,700"} Negative two decimals.
+rocket.numberFormat(123456789.101112, -2);
 
-@test {"12345678910111213"} Two decimals large number; no separators.
-rocket.numberFormat(123456789101112.131415, 2, '', '');
+@test {"12345678910"} Two decimals large number; no separators.
+rocket.numberFormat(123456789.101112, 2, '', '');
 
-@test {"123456789101100"} Negative two decimals; no separators.
-rocket.numberFormat(123456789101112.131415, -2, '', '');
+@test {"123456700"} Negative two decimals; no separators.
+rocket.numberFormat(123456789.101112, -2, '', '');
 
 
 */
@@ -100,11 +100,15 @@ rocket.numberFormat =
 
   var is_negative = number < 0;
 
-  if (number_of_decimals >= 0) {
-    number = number.toFixed(number_of_decimals);
-  } else {
+  if (number_of_decimals < 0) {
+
     var rnd = Math.pow(10, Math.abs(number_of_decimals));
     number = Math.floor(number / rnd) * rnd;
+
+  } else {
+
+    number = number.toFixed(number_of_decimals);
+
   }
 
   var formatted = ('' + number).split('');
