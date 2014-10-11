@@ -1,9 +1,9 @@
 
 
 /**
-@type {function((EventListener|function(Event)))}
+@type {string}
 */
-Element.prototype.detachEvent;
+Element.prototype.readyState;
 
 
 /**
