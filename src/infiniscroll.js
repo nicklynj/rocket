@@ -351,7 +351,11 @@ column is a String.
 rocket.InfiniScroll.prototype.setResults = function(data) {
 
   var rows = data.length;
-  var cols = data[0].length;
+
+  var cols = 0;
+  while (cols in data[0]) {
+    ++cols;
+  }
 
   var table = rocket.table(cols, rows);
 
