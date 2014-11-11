@@ -18,7 +18,14 @@ rocket.$('body').appendChild(rocket.createElement('button').innerHTML('no paddin
   infini.setQuery(function(index, len){
     var results = [];
     for (var i = 0; i < len; ++i) {
-      results.push([i + index, i, index, len, rocket.random()]);
+      var result = {};
+      result[0] = i + index;
+      result[1] = i;
+      result[2] = index;
+      result[3] = len;
+      result[4] = rocket.random();
+      result.id = i;
+      results.push(result);
     }
     infini.setResults(results);
   });
