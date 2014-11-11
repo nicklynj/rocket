@@ -34,6 +34,13 @@ rocket.InfiniScroll.prototype.pad_results_ = false;
 
 
 /**
+@type {Array.<string>}
+@private
+*/
+rocket.InfiniScroll.prototype.result_;
+
+
+/**
 @type {number}
 @private
 */
@@ -147,6 +154,17 @@ Get the HTMLTableElement that contains the viewable portion of the results.
 */
 rocket.InfiniScroll.prototype.getTable = function() {
   return this.table_;
+};
+
+
+/**
+Get the most recently selected result row from
+the data object passed to setResults.
+
+@return {Array.<string>} The selected data row.
+*/
+rocket.InfiniScroll.prototype.getResult = function() {
+  return this.result_;
 };
 
 
@@ -337,6 +355,13 @@ rocket.InfiniScroll.prototype.setResults = function(data) {
 
   var table = rocket.table(cols, rows);
 
+  var self = this;
+
+  table.live('tr', 'click', /** @this {HTMLTableRowElement} */ (function() {
+    self.result_ = data[this.rowIndex];
+    self.dispatchEvent('select');
+  }));
+
   for (var row = 0; row < rows; ++row) {
 
     table.trs[row].style({
@@ -351,6 +376,7 @@ rocket.InfiniScroll.prototype.setResults = function(data) {
 
   if (this.table_) {
 
+    this.table_.removeEventListener();
     this.container_.replaceChild(table, this.table_);
 
   } else {
@@ -376,6 +402,10 @@ Overridden method from the Component helper class.
 rocket.InfiniScroll.prototype.disposeInternal = function() {
 
   if (this.container_) {
+
+    if (this.table_) {
+      this.table_.removeEventListener();
+    }
 
     this.getComponentElement().removeEventListener(
         'scroll',

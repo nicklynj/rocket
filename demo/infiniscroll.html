@@ -12,6 +12,9 @@ rocket.$('body').appendChild(rocket.createElement('button').innerHTML('no paddin
   var infini = new rocket.InfiniScroll();
   infini.setLength(length.value());
   infini.setHeight(600);
+  infini.addEventListener('select', function() {
+    console.log(this.getResult());
+  });
   infini.setQuery(function(index, len){
     var results = [];
     for (var i = 0; i < len; ++i) {
@@ -27,6 +30,9 @@ rocket.$('body').appendChild(rocket.createElement('button').innerHTML('no paddin
   var infini = new rocket.InfiniScroll();
   infini.setLength(length.value());
   infini.setHeight(600);
+  infini.addEventListener('select', function() {
+    console.log(this.getResult());
+  });
   infini.setQuery(function(index, len){
     var results = [];
     for (var i = 0; i < len; ++i) {
@@ -45,6 +51,9 @@ rocket.$('body').appendChild(rocket.createElement('button').innerHTML('padding, 
   var infini = new rocket.InfiniScroll();
   infini.setLength(length.value());
   infini.setHeight(600);
+  infini.addEventListener('select', function() {
+    console.log(this.getResult());
+  });
   infini.setPadResults(true);
   infini.setQuery(function(index, len){
     var results = [];
