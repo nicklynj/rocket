@@ -154,7 +154,7 @@ rocket.DateInput.prototype.showInternal = function() {
               if (month === 11) {
                 ++year;
               }
-              month = (month + 2) % 12;
+              month = ((month + 2) % 12) || 12;
 
             } else {
 
