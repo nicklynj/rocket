@@ -99,8 +99,12 @@ rocket.EventTarget.getListenerTree = function() {
 
 /**
 Removes all eventListeners from all eventTargets.
+
+@param {boolean=} opt_remove_only_element_listeners
+Only remove any EventListener that has been attached to an Element.
 */
-rocket.EventTarget.removeAllEventListeners = function() {
+rocket.EventTarget.removeAllEventListeners =
+    function(opt_remove_only_element_listeners) {
 
   var tree = rocket.EventTarget.listener_tree_;
 
@@ -110,13 +114,19 @@ rocket.EventTarget.removeAllEventListeners = function() {
 
       for (var ns in tree[+guid][type]) {
 
-        rocket.EventTarget.prototype.removeEventListener.call(
+        var target = (
             /** @type {rocket.EventTarget} */ (
                 /** @type {rocket.EventListener} */ (
                     tree[+guid][type][ns][0]
                 ).get_target()
-            )
-        );
+            ));
+
+        if (
+            (!opt_remove_only_element_listeners) ||
+            (target.nodeName || target.window && target.window === target.self)
+        ) {
+          rocket.EventTarget.prototype.removeEventListener.call(target);
+        }
 
         break;
 
