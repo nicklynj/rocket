@@ -48,6 +48,13 @@ rocket.InfiniScroll.prototype.result_;
 
 
 /**
+@type {rocket.Elements}
+@private
+*/
+rocket.InfiniScroll.prototype.row_;
+
+
+/**
 @type {number}
 @private
 */
@@ -184,6 +191,16 @@ the data object passed to setResults.
 */
 rocket.InfiniScroll.prototype.getResult = function() {
   return this.result_;
+};
+
+
+/**
+Get the most recently selected HTMLTableRowElement.
+
+@return {rocket.Elements} The HTMLTableRowElement.
+*/
+rocket.InfiniScroll.prototype.getRow = function() {
+  return this.row_;
 };
 
 
@@ -382,6 +399,7 @@ rocket.InfiniScroll.prototype.setResults = function(data) {
 
   table.live('tr', 'click', /** @this {HTMLTableRowElement} */ (function() {
     self.result_ = data[this.rowIndex];
+    self.row_ = new rocket.Elements([this]);
     self.dispatchEvent('select');
   }));
 
