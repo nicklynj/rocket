@@ -34,6 +34,13 @@ rocket.InfiniScroll.prototype.pad_results_ = false;
 
 
 /**
+@type {boolean}
+@private
+*/
+rocket.InfiniScroll.prototype.no_wrap_ = false;
+
+
+/**
 @type {Array.<string>}
 @private
 */
@@ -74,6 +81,18 @@ rocket.InfiniScroll.prototype.setHeight = function(height) {
 
   this.height_ = height;
   this.init_sizes_();
+
+};
+
+
+/**
+Set to true to wrap text in columns.
+
+@param {boolean} wrap
+*/
+rocket.InfiniScroll.prototype.setWrap = function(wrap) {
+
+  this.no_wrap_ = wrap;
 
 };
 
@@ -374,6 +393,13 @@ rocket.InfiniScroll.prototype.setResults = function(data) {
 
     for (var col = 0; col < cols; ++col) {
       table.trs[row].tds[col].innerHTML(data[row][col]);
+      if (!this.no_wrap_) {
+        table.trs[row].tds[col].style({
+          'white-space': 'nowrap',
+          'overflow': 'hidden',
+          'text-overflow': 'ellipsis'
+        });
+      }
     }
 
   }
