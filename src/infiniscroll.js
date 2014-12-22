@@ -205,6 +205,16 @@ rocket.InfiniScroll.prototype.getRow = function() {
 
 
 /**
+Get the HTMLDivElement that has a scrollbar.
+
+@return {rocket.Elements} The HTMLDivElement.
+*/
+rocket.InfiniScroll.prototype.getScroller = function() {
+  return this.scrolling_element_;
+};
+
+
+/**
 @private
 @type {number}
 */
@@ -230,6 +240,13 @@ rocket.InfiniScroll.prototype.length_;
 @type {number}
 */
 rocket.InfiniScroll.prototype.query_length_;
+
+
+/**
+@private
+@type {rocket.Elements}
+*/
+rocket.InfiniScroll.prototype.scrolling_element_;
 
 
 /**
@@ -276,6 +293,8 @@ rocket.InfiniScroll.prototype.decorateInternal = function(element) {
 
   this.container_ = rocket.createElement('div');
   this.padding_ = rocket.createElement('div');
+
+  this.scrolling_element_ = element;
 
   this.padding_.style({
     'height': 0
