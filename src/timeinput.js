@@ -211,6 +211,13 @@ rocket.TimeInput.prototype.enterInternal = function() {
 */
 rocket.TimeInput.prototype.hideInternal = function() {
 
+  var time =
+      rocket.strToTime(/** @type {string} */ (this.getInputElement().value()));
+
+  if (time) {
+    this.getInputElement().value(time);
+  }
+
   this.container_.removeEventListener();
 
   new rocket.Elements([document.body]).removeChild(this.container_);

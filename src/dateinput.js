@@ -216,6 +216,17 @@ Overridden method from the Input helper class.
 */
 rocket.DateInput.prototype.hideInternal = function() {
 
+  var date =
+      rocket.strToDate(/** @type {string} */ (this.getInputElement().value()));
+
+  if (date) {
+    this.getInputElement().value(
+        rocket.padLeft(date.getMonth() + 1, 2, '0') + '/' +
+        rocket.padLeft(date.getDate(), 2, '0') + '/' +
+        date.getFullYear()
+    );
+  }
+
   this.container_.removeEventListener();
 
   new rocket.Elements([document.body]).removeChild(this.container_);
