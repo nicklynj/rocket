@@ -433,15 +433,13 @@ rocket.InfiniScroll.prototype.setResults = function(data) {
 
   var self = this;
 
-  table.live('tr', 'click', /**
-        @this {HTMLTableRowElement}
-        @param {Event} e
-      */ (function(e) {
-        self.result_ = data[this.rowIndex];
-        self.cell_ = new rocket.Elements([e.target]);
-        self.row_ = new rocket.Elements([this]);
-        self.dispatchEvent('select');
-      }));
+  table.live('td', 'click', /** @this {HTMLTableCellElement} */ (function() {
+    self.result_ =
+        data[/** @type {HTMLTableRowElement} */ (this.parentNode).rowIndex];
+    self.cell_ = new rocket.Elements([this]);
+    self.row_ = new rocket.Elements([this.parentNode]);
+    self.dispatchEvent('select');
+  }));
 
   for (var row = 0; row < rows; ++row) {
 
