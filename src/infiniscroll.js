@@ -296,7 +296,7 @@ rocket.InfiniScroll.prototype.table_;
 
 /**
 @private
-@type {function(number, number)}
+@type {function(this:rocket.InfiniScroll, number, number)}
 */
 rocket.InfiniScroll.prototype.query_;
 
@@ -369,7 +369,8 @@ rocket.InfiniScroll.prototype.decorateInternal = function(element) {
       self.index_ = index;
       self.index_length_ = index_length;
 
-      self.query_(
+      self.query_.call(
+          this,
           index,
           index_length
       );
