@@ -370,7 +370,7 @@ rocket.InfiniScroll.prototype.decorateInternal = function(element) {
       self.index_length_ = index_length;
 
       self.query_.call(
-          this,
+          self,
           index,
           index_length
       );
