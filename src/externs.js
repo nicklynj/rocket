@@ -6,12 +6,6 @@
 Element.prototype.readyState;
 
 
-/**
-@type {function(string):boolean}
-*/
-Element.prototype.matches;
-
-
 /** @type {boolean} */
 Event.prototype.propagationStopped;
 
