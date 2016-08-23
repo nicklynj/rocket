@@ -242,7 +242,7 @@ Abort this request.
 */
 rocket.XMLHttpRequest.prototype.abort = function() {
 
-  if (this.readyState > 1) {
+  if (this.readyState) {
 
     if (this.request_ && typeof this.request_.abort === 'function') {
 
